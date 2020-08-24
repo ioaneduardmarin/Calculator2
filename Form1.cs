@@ -27,9 +27,14 @@ namespace GettingStartedWithCSharp
             event EventHandler ResultClicked;
             string TxtResultBox { get; set; }
             string TxtHistoryBox { get; set; }
-            bool IsMemoryStored { get; set; }
             string TxtMemoryShow { get; set; }
             string TxtEquationLabel { get; set; }
+            void MemoryButtonShow(string tooltipMemorie);
+            void EquationLabel(string ecuatiePartiala);
+            void HistoryBoxShow(string istoric);
+            void ResultBoxShow(string rezultat);
+            void EnableMemoryButtons();
+            void DisableMemoryButtons();
         }
 
         public event EventHandler DigitClicked
@@ -154,51 +159,41 @@ namespace GettingStartedWithCSharp
             }
         }
 
-        public bool IsMemoryStored
-        {
-            get
-            {
-                return IsMemoryStored;
-            }
-            set
-            {
-                if (IsMemoryStored == false)
-                {
-                    MClear.Enabled = false;
-                    MRestore.Enabled = false;
-                    MInfo.Enabled = false;
-                }
-                else
-                {
-                    MClear.Enabled = true;
-                    MRestore.Enabled = true;
-                    MInfo.Enabled = true;
-                }
-            }
-        }
-
+        
         public string TxtResultBox { get; set; }
         public string TxtHistoryBox { get; set; }
         public string TxtEquationLabel { get; set; }
         public string TxtMemoryShow { get; set; }
 
 
-        public void ResultBoxShow(string TxtResultBox)
+        public void ResultBoxShow(string rezultat)
         {
-            ResultBox.Text = TxtResultBox;
+            ResultBox.Text = rezultat;
         }
-        public void HistoryBoxShow(string TxtHistoryBox)
+        public void HistoryBoxShow(string istoric)
         {
-            ResultBox.Text = TxtHistoryBox;
+            HistoryBox.Text = istoric;
         }
-        public void EquationLabel(string TxtEquationLabel)
+        public void EquationLabel(string ecuatiePartiala)
         {
-            ResultBox.Text = TxtEquationLabel;
+            Equation.Text = ecuatiePartiala;
         }
-        public void MemoryButtonShow(string TxtMemoryShow)
+        public void MemoryButtonShow(string tooltipMemorie)
         {
-            ResultBox.Text = TxtMemoryShow;
+            MemoryShow.SetToolTip(MInfo, tooltipMemorie);
         }
 
+        public void EnableMemoryButtons()
+        {
+            MClear.Enabled = true;
+            MInfo.Enabled = true;
+            MRestore.Enabled = true;
+        }
+        public void DisableMemoryButtons()
+        {
+            MClear.Enabled = false;
+            MInfo.Enabled = false;
+            MRestore.Enabled = false;
+        }
     }
 }

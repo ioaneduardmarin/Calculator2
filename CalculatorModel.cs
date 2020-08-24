@@ -14,6 +14,5 @@
         public string _resultBox;
         public string _historyBox;
         public string _equation;
-        public string _memoryShow;
     }
 }

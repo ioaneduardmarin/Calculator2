@@ -13,7 +13,9 @@ namespace GettingStartedWithCSharp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Calculator());
+            var CalcView = new Calculator();
+            var CalcPresenter = new CalculatorPresenter(CalcView);
+            Application.Run(CalcView);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace GettingStartedWithCSharp
 {
@@ -14,8 +15,10 @@ namespace GettingStartedWithCSharp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             var CalcView = new Calculator();
-            var CalcPresenter = new CalculatorPresenter(CalcView);
+            var MessageService = new MessageBoxDisplayService();
+            var CalcPresenter = new CalculatorPresenter(CalcView,MessageService);
             Application.Run(CalcView);
         }
     }
 }
+

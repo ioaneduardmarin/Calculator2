@@ -8,21 +8,24 @@ namespace GettingStartedWithCSharp
     class CalculatorPresenter
     {
         private readonly ICalculatorView calculatorView;
+        private readonly IMessageBoxDisplayService messageBoxDisplayService;
         private CalculatorModel _calculatorModel = new CalculatorModel();
 
-        public CalculatorPresenter(ICalculatorView calculatorView)
+        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService)
         {
             this.calculatorView = calculatorView;
-            calculatorView.DigitClicked += DigitClick;
-            calculatorView.OperatorClicked += OperatorClick;
-            calculatorView.ResultClicked += ResultClick;
-            calculatorView.SaveHistoryClicked += SaveHistoryClick;
-            calculatorView.MemoryClicked += MemoryClick;
-            calculatorView.ClearAllClicked += ClearAllClick;
-            calculatorView.ClearEntryClicked += ClearEntryClick;
+            this.messageBoxDisplayService = messageBoxDisplayService;
+            calculatorView.DigitClicked += OnDigitClick;
+            calculatorView.OperatorClicked += OnOperatorClick;
+            calculatorView.ResultClicked += OnResultClick;
+            calculatorView.SaveHistoryClicked += OnSaveHistoryClick;
+            calculatorView.MemoryClicked += OnMemoryClick;
+            calculatorView.ClearAllClicked += OnClearAllCLick;
+            calculatorView.ClearEntryClicked += OnClearEntryClick;
+            
         }
 
-        private void DigitClick(object sender, EventArgs e)
+        private void OnDigitClick(object sender, EventArgs e)
         {
             if (_calculatorModel.Rezultat == "0" || (_calculatorModel.OperationPressed))
                 _calculatorModel.Rezultat = "";
@@ -35,16 +38,16 @@ namespace GettingStartedWithCSharp
             _calculatorModel.OperationPressed = false;
             Button b = (Button)sender;
             _calculatorModel.Rezultat += b.Text;
-            calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+            calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
         }
 
-        private void ClearEntryClick(object sender, EventArgs e)
+        private void OnClearEntryClick(object sender, EventArgs e)
         {
             _calculatorModel.Rezultat = "0";
-            calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+            calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
         }
 
-        private void OperatorClick(object sender, EventArgs e)
+        private void OnOperatorClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
             _calculatorModel.Operation = b.Text;
@@ -63,7 +66,7 @@ namespace GettingStartedWithCSharp
             calculatorView.EquationLabel(_calculatorModel.Equation);
         }
 
-        private void ResultClick(object sender, EventArgs e)
+        private void OnResultClick(object sender, EventArgs e)
         {
             _calculatorModel.OperationPressed = false;
             _calculatorModel.Equation = "";
@@ -71,41 +74,41 @@ namespace GettingStartedWithCSharp
             {
                 case "+":
                     _calculatorModel.Rezultat = (_calculatorModel.Value + (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "-":
                     _calculatorModel.Rezultat = (_calculatorModel.Value - (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "*":
                     _calculatorModel.Rezultat = (_calculatorModel.Value * (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "/":
                     try
                     {
                         _calculatorModel.Rezultat = (_calculatorModel.Value / (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     catch (DivideByZeroException)
                     {
-                        MessageBox.Show("Impartirea la 0 nu este o operatie valida");
+                        messageBoxDisplayService.Show("Impartirea la 0 nu este o operatie valida");
                         _calculatorModel.Rezultat = "operatie nevalida";
-                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     break;
                 case "sqrt":
                     if (_calculatorModel.Value < 0)
                     {
-                        
-                        MessageBox.Show("Radacina patrata a numerelor negative nu este posibila");
+
+                        messageBoxDisplayService.Show("Help");
                         _calculatorModel.Rezultat = "operatie nevalida";
-                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     else
                     {
                         _calculatorModel.Rezultat = (Math.Sqrt((double)_calculatorModel.Value)).ToString("0.000");
-                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     break;
                 default:
@@ -113,19 +116,19 @@ namespace GettingStartedWithCSharp
             }
             _calculatorModel.ResultObtained = true;
             _calculatorModel.Istoric += (_calculatorModel.Rezultat + ", ");
-            calculatorView.HistoryBoxShow(_calculatorModel.Istoric);
+            calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
         }
 
-        private void ClearAllClick(object sender, EventArgs e)
+        private void OnClearAllCLick(object sender, EventArgs e)
         {
             _calculatorModel.Rezultat = "";
-            calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+            calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
             _calculatorModel.Istoric = "";
-            calculatorView.HistoryBoxShow(_calculatorModel.Istoric);
+            calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
             _calculatorModel.Value = 0;
         }
 
-        private void SaveHistoryClick(object sender, EventArgs e)
+        private void OnSaveHistoryClick(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Text File|*";
@@ -140,7 +143,7 @@ namespace GettingStartedWithCSharp
             }
         }
 
-        private void MemoryClick(object sender, EventArgs e)
+        private void OnMemoryClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
             _calculatorModel.MemoryClick = b.Text;
@@ -165,7 +168,7 @@ namespace GettingStartedWithCSharp
                     break;
                 case "MR":
                     _calculatorModel.Rezultat = _calculatorModel.Memory.ToString();
-                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
+                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "MS":
                     _calculatorModel.Memory = (decimal)Double.Parse(_calculatorModel.Rezultat);
@@ -186,6 +189,7 @@ namespace GettingStartedWithCSharp
                     break;
             }
         }
-
+        
     }
+  
 }

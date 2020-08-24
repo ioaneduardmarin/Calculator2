@@ -24,8 +24,8 @@ namespace GettingStartedWithCSharp
             event EventHandler ResultClicked;
             void MemoryButtonShow(string tooltipMemorie);
             void EquationLabel(string ecuatiePartiala);
-            void HistoryBoxShow(string istoric);
-            void ResultBoxShow(string rezultat);
+            void SetHistoryBoxText(string istoric);
+            void SetResultBoxText(string rezultat);
             void EnableMemoryButtons();
             void DisableMemoryButtons();
             string TxtMemoryShow { get; set; }
@@ -155,11 +155,11 @@ namespace GettingStartedWithCSharp
 
         public string TxtMemoryShow { get; set; }
 
-        public void ResultBoxShow(string rezultat)
+        public void SetResultBoxText(string rezultat)
         {
             ResultBox.Text = rezultat;
         }
-        public void HistoryBoxShow(string istoric)
+        public void SetHistoryBoxText(string istoric)
         {
             HistoryBox.Text = istoric;
         }

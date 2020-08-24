@@ -24,24 +24,24 @@ namespace GettingStartedWithCSharp
 
         private void DigitClick(object sender, EventArgs e)
         {
-            if (_calculatorModel.RezultBox == "0" || (_calculatorModel.OperationPressed))
-                _calculatorModel.RezultBox = "";
+            if (_calculatorModel.Rezultat == "0" || (_calculatorModel.OperationPressed))
+                _calculatorModel.Rezultat = "";
 
             if (_calculatorModel.ResultObtained)
             {
-                _calculatorModel.RezultBox = "";
+                _calculatorModel.Rezultat = "";
             }
             _calculatorModel.ResultObtained = false;
             _calculatorModel.OperationPressed = false;
             Button b = (Button)sender;
-            _calculatorModel.RezultBox += b.Text;
-            calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+            _calculatorModel.Rezultat += b.Text;
+            calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
         }
 
         private void ClearEntryClick(object sender, EventArgs e)
         {
-            _calculatorModel.RezultBox = "0";
-            calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+            _calculatorModel.Rezultat = "0";
+            calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
         }
 
         private void OperatorClick(object sender, EventArgs e)
@@ -50,12 +50,12 @@ namespace GettingStartedWithCSharp
             _calculatorModel.Operation = b.Text;
             try
             {
-                _calculatorModel.Value = (decimal)(Double.Parse(_calculatorModel.RezultBox));
+                _calculatorModel.Value = (decimal)(Double.Parse(_calculatorModel.Rezultat));
             }
             catch (System.FormatException)
             {
                 MessageBox.Show("Introduceti o valoare valida");
-                _calculatorModel.RezultBox = "0";
+                _calculatorModel.Rezultat = "0";
                 _calculatorModel.Equation = "0";
             }
             _calculatorModel.OperationPressed = true;
@@ -70,28 +70,28 @@ namespace GettingStartedWithCSharp
             switch (_calculatorModel.Operation)
             {
                 case "+":
-                    _calculatorModel.RezultBox = (_calculatorModel.Value + (decimal)Double.Parse(_calculatorModel.RezultBox)).ToString("0.000");
-                    calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                    _calculatorModel.Rezultat = (_calculatorModel.Value + (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
+                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     break;
                 case "-":
-                    _calculatorModel.RezultBox = (_calculatorModel.Value - (decimal)Double.Parse(_calculatorModel.RezultBox)).ToString("0.000");
-                    calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                    _calculatorModel.Rezultat = (_calculatorModel.Value - (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
+                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     break;
                 case "*":
-                    _calculatorModel.RezultBox = (_calculatorModel.Value * (decimal)Double.Parse(_calculatorModel.RezultBox)).ToString("0.000");
-                    calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                    _calculatorModel.Rezultat = (_calculatorModel.Value * (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
+                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     break;
                 case "/":
                     try
                     {
-                        _calculatorModel.RezultBox = (_calculatorModel.Value / (decimal)Double.Parse(_calculatorModel.RezultBox)).ToString("0.000");
-                        calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                        _calculatorModel.Rezultat = (_calculatorModel.Value / (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
+                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     }
                     catch (DivideByZeroException)
                     {
                         MessageBox.Show("Impartirea la 0 nu este o operatie valida");
-                        _calculatorModel.RezultBox = "operatie nevalida";
-                        calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                        _calculatorModel.Rezultat = "operatie nevalida";
+                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     }
                     break;
                 case "sqrt":
@@ -102,27 +102,27 @@ namespace GettingStartedWithCSharp
                         {
                             MessageBox.Show("Radacina patrata a numerelor negative nu este posibila");
                         }
-                        _calculatorModel.RezultBox = "operatie nevalida";
-                        calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                        _calculatorModel.Rezultat = "operatie nevalida";
+                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     }
                     else
                     {
-                        _calculatorModel.RezultBox = (Math.Sqrt((double)_calculatorModel.Value)).ToString("0.000");
-                        calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                        _calculatorModel.Rezultat = (Math.Sqrt((double)_calculatorModel.Value)).ToString("0.000");
+                        calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     }
                     break;
                 default:
                     break;
             }
             _calculatorModel.ResultObtained = true;
-            _calculatorModel.Istoric += (_calculatorModel.RezultBox + ", ");
+            _calculatorModel.Istoric += (_calculatorModel.Rezultat + ", ");
             calculatorView.HistoryBoxShow(_calculatorModel.Istoric);
         }
 
         private void ClearAllClick(object sender, EventArgs e)
         {
-            _calculatorModel.RezultBox = "";
-            calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+            _calculatorModel.Rezultat = "";
+            calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
             _calculatorModel.Istoric = "";
             calculatorView.HistoryBoxShow(_calculatorModel.Istoric);
             _calculatorModel.Value = 0;
@@ -167,19 +167,19 @@ namespace GettingStartedWithCSharp
                     }
                     break;
                 case "MR":
-                    _calculatorModel.RezultBox = _calculatorModel.Memory.ToString();
-                    calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
+                    _calculatorModel.Rezultat = _calculatorModel.Memory.ToString();
+                    calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     break;
                 case "MS":
-                    _calculatorModel.Memory = (decimal)Double.Parse(_calculatorModel.RezultBox);
+                    _calculatorModel.Memory = (decimal)Double.Parse(_calculatorModel.Rezultat);
                     _calculatorModel.IsMemoryStored = true;
                     calculatorView.EnableMemoryButtons();
                     break;
                 case "M+":
-                    _calculatorModel.Memory += (decimal)(Double.Parse(_calculatorModel.RezultBox));
+                    _calculatorModel.Memory += (decimal)(Double.Parse(_calculatorModel.Rezultat));
                     break;
                 case "M-":
-                    _calculatorModel.Memory -= (decimal)Double.Parse(_calculatorModel.RezultBox);
+                    _calculatorModel.Memory -= (decimal)Double.Parse(_calculatorModel.Rezultat);
                     break;
                 case "M":
                     calculatorView.TxtMemoryShow = _calculatorModel.Memory.ToString();

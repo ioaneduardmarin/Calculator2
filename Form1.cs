@@ -25,10 +25,6 @@ namespace GettingStartedWithCSharp
             event EventHandler ClearAllClicked;
             event EventHandler SaveHistoryClicked;
             event EventHandler ResultClicked;
-            string TxtResultBox { get; set; }
-            string TxtHistoryBox { get; set; }
-            string TxtMemoryShow { get; set; }
-            string TxtEquationLabel { get; set; }
             void MemoryButtonShow(string tooltipMemorie);
             void EquationLabel(string ecuatiePartiala);
             void HistoryBoxShow(string istoric);

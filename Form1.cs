@@ -2,11 +2,8 @@
 using System.Windows.Forms;
 using static GettingStartedWithCSharp.Calculator;
 
-
-
 namespace GettingStartedWithCSharp
 {
-
     public partial class Calculator : Form, ICalculatorView
     {
 

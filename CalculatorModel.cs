@@ -1,18 +1,16 @@
 ﻿namespace GettingStartedWithCSharp
 {
-
-
     class CalculatorModel
     {
-        public decimal _value;
-        public string _operation;
-        public string _memoryClick;
-        public bool _isMemoryStored;
-        public decimal _memory;
-        public bool _operationPressed;
-        public bool _resultObtained;
-        public string _resultBox;
-        public string _historyBox;
-        public string _equation;
+        public decimal Value { get; set; }
+        public string Operation { get; set; }
+        public string MemoryClick { get; set; }
+        public bool IsMemoryStored { get; set; }
+        public decimal Memory { get; set; }
+        public bool OperationPressed { get; set; }
+        public bool ResultObtained { get; set; }
+        public string RezultBox { get; set; }
+        public string HistoryBox { get; set; }
+        public string Equation { get; set; }
     }
 }

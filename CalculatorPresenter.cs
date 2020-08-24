@@ -1,20 +1,22 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using static GettingStartedWithCSharp.Calculator;
+using static GettingStartedWithCSharp.CalculatorForm;
 
 namespace GettingStartedWithCSharp
 {
     class CalculatorPresenter
     {
-        private readonly ICalculatorView calculatorView;
-        private readonly IMessageBoxDisplayService messageBoxDisplayService;
+        private readonly ICalculatorView _calculatorView;
+        private readonly IMessageBoxDisplayService _messageBoxDisplayService;
+        private readonly ISaveHistoryService _saveHistoryService;
         private CalculatorModel _calculatorModel = new CalculatorModel();
 
-        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService)
+        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService)
         {
-            this.calculatorView = calculatorView;
-            this.messageBoxDisplayService = messageBoxDisplayService;
+            this._calculatorView = calculatorView;
+            this._messageBoxDisplayService = messageBoxDisplayService;
+            this._saveHistoryService = saveHistoryService;
             calculatorView.DigitClicked += OnDigitClick;
             calculatorView.OperatorClicked += OnOperatorClick;
             calculatorView.ResultClicked += OnResultClick;
@@ -22,7 +24,6 @@ namespace GettingStartedWithCSharp
             calculatorView.MemoryClicked += OnMemoryClick;
             calculatorView.ClearAllClicked += OnClearAllCLick;
             calculatorView.ClearEntryClicked += OnClearEntryClick;
-            
         }
 
         private void OnDigitClick(object sender, EventArgs e)
@@ -38,13 +39,13 @@ namespace GettingStartedWithCSharp
             _calculatorModel.OperationPressed = false;
             Button b = (Button)sender;
             _calculatorModel.Rezultat += b.Text;
-            calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+            _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
         }
 
         private void OnClearEntryClick(object sender, EventArgs e)
         {
             _calculatorModel.Rezultat = "0";
-            calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+            _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
         }
 
         private void OnOperatorClick(object sender, EventArgs e)
@@ -63,7 +64,7 @@ namespace GettingStartedWithCSharp
             }
             _calculatorModel.OperationPressed = true;
             _calculatorModel.Equation = _calculatorModel.Value + " " + _calculatorModel.Operation;
-            calculatorView.EquationLabel(_calculatorModel.Equation);
+            _calculatorView.EquationLabel(_calculatorModel.Equation);
         }
 
         private void OnResultClick(object sender, EventArgs e)
@@ -74,41 +75,41 @@ namespace GettingStartedWithCSharp
             {
                 case "+":
                     _calculatorModel.Rezultat = (_calculatorModel.Value + (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                    _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "-":
                     _calculatorModel.Rezultat = (_calculatorModel.Value - (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                    _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "*":
                     _calculatorModel.Rezultat = (_calculatorModel.Value * (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                    _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "/":
                     try
                     {
                         _calculatorModel.Rezultat = (_calculatorModel.Value / (decimal)Double.Parse(_calculatorModel.Rezultat)).ToString("0.000");
-                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                        _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     catch (DivideByZeroException)
                     {
-                        messageBoxDisplayService.Show("Impartirea la 0 nu este o operatie valida");
+                        _messageBoxDisplayService.Show("Impartirea la 0 nu este o operatie valida.");
                         _calculatorModel.Rezultat = "operatie nevalida";
-                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                        _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     break;
                 case "sqrt":
                     if (_calculatorModel.Value < 0)
                     {
 
-                        messageBoxDisplayService.Show("Help");
+                        _messageBoxDisplayService.Show("Extragerea radacinii patrate dintr-un numar negativ nu este o operatie valida.");
                         _calculatorModel.Rezultat = "operatie nevalida";
-                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                        _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     else
                     {
                         _calculatorModel.Rezultat = (Math.Sqrt((double)_calculatorModel.Value)).ToString("0.000");
-                        calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                        _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     }
                     break;
                 default:
@@ -116,64 +117,63 @@ namespace GettingStartedWithCSharp
             }
             _calculatorModel.ResultObtained = true;
             _calculatorModel.Istoric += (_calculatorModel.Rezultat + ", ");
-            calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+            _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
         }
 
         private void OnClearAllCLick(object sender, EventArgs e)
         {
             _calculatorModel.Rezultat = "";
-            calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+            _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
             _calculatorModel.Istoric = "";
-            calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+            _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
             _calculatorModel.Value = 0;
         }
 
         private void OnSaveHistoryClick(object sender, EventArgs e)
         {
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "Text File|*";
-            if (sfd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            bool isHistorySaved = false;
+            isHistorySaved =_saveHistoryService.SaveHistory(_calculatorModel.Istoric);
+            if (isHistorySaved == false)
             {
-                string path = sfd.FileName;
-                using (var sw = new StreamWriter(File.Create(path)))
-                {
-                    sw.Write(_calculatorModel.Istoric.Remove((_calculatorModel.Istoric.Length - 2), 1));
-                    sw.Dispose();
-                }
+                _messageBoxDisplayService.Show("Istoricul nu a fost salvat");
             }
+            else
+            {
+                _messageBoxDisplayService.Show("Istoricul a fost salvat.");
+                _calculatorModel.Rezultat = "";
+                _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                _calculatorModel.Istoric = "";
+                _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+                _calculatorModel.Value = 0;
+            }
+
         }
 
         private void OnMemoryClick(object sender, EventArgs e)
         {
+            string memoryClick;
             Button b = (Button)sender;
-            _calculatorModel.MemoryClick = b.Text;
+            memoryClick = b.Text;
 
             if (!_calculatorModel.IsMemoryStored)
             {
-                calculatorView.DisableMemoryButtons();
+                _calculatorView.DisableMemoryButtons();
             }
 
-            switch (_calculatorModel.MemoryClick)
+            switch (memoryClick)
             {
                 case "MC":
-                    string mesaj = "Do you want to clear the memory?";
-                    string titlu = "Memory Clear";
-                    MessageBoxButtons butoane = MessageBoxButtons.YesNo;
-                    DialogResult rezultat = MessageBox.Show(mesaj, titlu, butoane);
-                    if (rezultat == DialogResult.Yes)
-                    {
-                        _calculatorModel.IsMemoryStored = false;
-                        calculatorView.DisableMemoryButtons();
-                    }
+                    _calculatorModel.IsMemoryStored= _messageBoxDisplayService.OnMemoryClear();
+                    _calculatorView.DisableMemoryButtons();
                     break;
                 case "MR":
                     _calculatorModel.Rezultat = _calculatorModel.Memory.ToString();
-                    calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                    _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
                     break;
                 case "MS":
                     _calculatorModel.Memory = (decimal)Double.Parse(_calculatorModel.Rezultat);
                     _calculatorModel.IsMemoryStored = true;
-                    calculatorView.EnableMemoryButtons();
+                    _calculatorView.EnableMemoryButtons();
                     break;
                 case "M+":
                     _calculatorModel.Memory += (decimal)(Double.Parse(_calculatorModel.Rezultat));
@@ -182,8 +182,8 @@ namespace GettingStartedWithCSharp
                     _calculatorModel.Memory -= (decimal)Double.Parse(_calculatorModel.Rezultat);
                     break;
                 case "M":
-                    calculatorView.TxtMemoryShow = _calculatorModel.Memory.ToString();
-                    calculatorView.MemoryButtonShow(calculatorView.TxtMemoryShow);
+                    _calculatorView.TxtMemoryShow = _calculatorModel.Memory.ToString();
+                    _calculatorView.MemoryButtonShow(_calculatorView.TxtMemoryShow);
                     break;
                 default:
                     break;

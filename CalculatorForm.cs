@@ -1,34 +1,16 @@
 ﻿using System;
 using System.Windows.Forms;
-using static GettingStartedWithCSharp.Calculator;
+using static GettingStartedWithCSharp.CalculatorForm;
 
 namespace GettingStartedWithCSharp
 {
-    public partial class Calculator : Form, ICalculatorView
+    public partial class CalculatorForm : Form, ICalculatorView
     {
 
-        public Calculator()
+        public CalculatorForm()
         {
             InitializeComponent();
 
-        }
-
-        public interface ICalculatorView
-        {
-            event EventHandler DigitClicked;
-            event EventHandler OperatorClicked;
-            event EventHandler MemoryClicked;
-            event EventHandler ClearEntryClicked;
-            event EventHandler ClearAllClicked;
-            event EventHandler SaveHistoryClicked;
-            event EventHandler ResultClicked;
-            void MemoryButtonShow(string tooltipMemorie);
-            void EquationLabel(string ecuatiePartiala);
-            void SetHistoryBoxText(string istoric);
-            void SetResultBoxText(string rezultat);
-            void EnableMemoryButtons();
-            void DisableMemoryButtons();
-            string TxtMemoryShow { get; set; }
         }
 
         public event EventHandler DigitClicked
@@ -184,5 +166,23 @@ namespace GettingStartedWithCSharp
             MInfo.Enabled = false;
             MRestore.Enabled = false;
         }
+    }
+   
+    public interface ICalculatorView
+    {
+        event EventHandler DigitClicked;
+        event EventHandler OperatorClicked;
+        event EventHandler MemoryClicked;
+        event EventHandler ClearEntryClicked;
+        event EventHandler ClearAllClicked;
+        event EventHandler SaveHistoryClicked;
+        event EventHandler ResultClicked;
+        void MemoryButtonShow(string tooltipMemorie);
+        void EquationLabel(string ecuatiePartiala);
+        void SetHistoryBoxText(string istoric);
+        void SetResultBoxText(string rezultat);
+        void EnableMemoryButtons();
+        void DisableMemoryButtons();
+        string TxtMemoryShow { get; set; }
     }
 }

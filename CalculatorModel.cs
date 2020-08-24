@@ -4,7 +4,6 @@
     {
         public decimal Value { get; set; }
         public string Operation { get; set; }
-        public string MemoryClick { get; set; }
         public bool IsMemoryStored { get; set; }
         public decimal Memory { get; set; }
         public bool OperationPressed { get; set; }

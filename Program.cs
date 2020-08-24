@@ -6,18 +6,16 @@ namespace GettingStartedWithCSharp
 {
     static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            var CalcView = new Calculator();
-            var MessageService = new MessageBoxDisplayService();
-            var CalcPresenter = new CalculatorPresenter(CalcView,MessageService);
-            Application.Run(CalcView);
+            var calcView = new CalculatorForm();
+            var messageService = new MessageBoxDisplayService();
+            var saveHist = new SaveHistoryService();
+            var CalcPresenter = new CalculatorPresenter(calcView,messageService, saveHist);
+            Application.Run(calcView);
         }
     }
 }

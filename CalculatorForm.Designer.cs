@@ -1,6 +1,6 @@
 ﻿namespace GettingStartedWithCSharp
 {
-    partial class Calculator
+    partial class CalculatorForm
     {
         /// <summary>
         /// Required designer variable.

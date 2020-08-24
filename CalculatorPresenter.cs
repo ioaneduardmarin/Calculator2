@@ -97,11 +97,8 @@ namespace GettingStartedWithCSharp
                 case "sqrt":
                     if (_calculatorModel.Value < 0)
                     {
-                        try { throw new Exception("Radacina patrata a numerelor negative nu este posibila"); }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Radacina patrata a numerelor negative nu este posibila");
-                        }
+                        
+                        MessageBox.Show("Radacina patrata a numerelor negative nu este posibila");
                         _calculatorModel.Rezultat = "operatie nevalida";
                         calculatorView.ResultBoxShow(_calculatorModel.Rezultat);
                     }

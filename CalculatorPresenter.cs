@@ -21,8 +21,6 @@ namespace GettingStartedWithCSharp
             calculatorView.MemoryClicked += MemoryClick;
             calculatorView.ClearAllClicked += ClearAllClick;
             calculatorView.ClearEntryClicked += ClearEntryClick;
-            
-
         }
 
 
@@ -42,8 +40,6 @@ namespace GettingStartedWithCSharp
             Button b = (Button)sender;
             _calculatorModel._resultBox += b.Text;
             calculatorView.ResultBoxShow(_calculatorModel._resultBox);
-
-
         }
 
         private void ClearEntryClick(object sender, EventArgs e)
@@ -69,7 +65,6 @@ namespace GettingStartedWithCSharp
             _calculatorModel._operationPressed = true;
             _calculatorModel._equation = _calculatorModel._value + " " + _calculatorModel._operation;
             calculatorView.EquationLabel(_calculatorModel._equation);
-
         }
 
         private void ResultClick(object sender, EventArgs e)

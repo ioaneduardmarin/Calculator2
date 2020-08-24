@@ -31,6 +31,7 @@ namespace GettingStartedWithCSharp
             void ResultBoxShow(string rezultat);
             void EnableMemoryButtons();
             void DisableMemoryButtons();
+            string TxtMemoryShow { get; set; }
         }
 
         public event EventHandler DigitClicked
@@ -155,12 +156,7 @@ namespace GettingStartedWithCSharp
             }
         }
 
-        
-        public string TxtResultBox { get; set; }
-        public string TxtHistoryBox { get; set; }
-        public string TxtEquationLabel { get; set; }
         public string TxtMemoryShow { get; set; }
-
 
         public void ResultBoxShow(string rezultat)
         {

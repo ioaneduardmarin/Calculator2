@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using static GettingStartedWithCSharp.CalculatorForm;
 
 namespace GettingStartedWithCSharp
@@ -58,7 +57,7 @@ namespace GettingStartedWithCSharp
             }
             catch (System.FormatException)
             {
-                MessageBox.Show("Introduceti o valoare valida");
+                _messageBoxDisplayService.Show("Introduceti o valoare valida");
                 _calculatorModel.Rezultat = "0";
                 _calculatorModel.Equation = "0";
             }
@@ -151,9 +150,8 @@ namespace GettingStartedWithCSharp
 
         private void OnMemoryClick(object sender, EventArgs e)
         {
-            string memoryClick;
             Button b = (Button)sender;
-            memoryClick = b.Text;
+            string memoryClick = b.Text;
 
             if (!_calculatorModel.IsMemoryStored)
             {

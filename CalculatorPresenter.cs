@@ -115,16 +115,16 @@ namespace GettingStartedWithCSharp
                     break;
             }
             _calculatorModel.ResultObtained = true;
-            _calculatorModel.HistoryBox += (_calculatorModel.RezultBox + ", ");
-            calculatorView.HistoryBoxShow(_calculatorModel.HistoryBox);
+            _calculatorModel.Istoric += (_calculatorModel.RezultBox + ", ");
+            calculatorView.HistoryBoxShow(_calculatorModel.Istoric);
         }
 
         private void ClearAllClick(object sender, EventArgs e)
         {
             _calculatorModel.RezultBox = "";
             calculatorView.ResultBoxShow(_calculatorModel.RezultBox);
-            _calculatorModel.HistoryBox = "";
-            calculatorView.HistoryBoxShow(_calculatorModel.HistoryBox);
+            _calculatorModel.Istoric = "";
+            calculatorView.HistoryBoxShow(_calculatorModel.Istoric);
             _calculatorModel.Value = 0;
         }
 
@@ -137,7 +137,7 @@ namespace GettingStartedWithCSharp
                 string path = sfd.FileName;
                 using (var sw = new StreamWriter(File.Create(path)))
                 {
-                    sw.Write(_calculatorModel.HistoryBox.Remove((_calculatorModel.HistoryBox.Length - 2), 1));
+                    sw.Write(_calculatorModel.Istoric.Remove((_calculatorModel.Istoric.Length - 2), 1));
                     sw.Dispose();
                 }
             }

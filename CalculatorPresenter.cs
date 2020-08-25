@@ -132,13 +132,15 @@ namespace GettingStartedWithCSharp
 
         private void OnEraseHistory(object sender, EventArgs e)
         {
+            string mesaj = "Doresti sa stergi istoricul?";
+            string titlu = "Stergere Istoric";
             if (String.IsNullOrEmpty(_calculatorModel.Istoric))
             {
                 _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce sterge.");
             }
             else
             {
-                bool clearHistory = _messageBoxDisplayService.HistoryClearing();
+                bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj,titlu);
                 if (clearHistory == true)
                 {
                     _calculatorModel.Istoric = "";
@@ -149,7 +151,9 @@ namespace GettingStartedWithCSharp
 
         private void OnSaveHistoryClick(object sender, EventArgs e)
         {
-            if (String.IsNullOrEmpty(_calculatorModel.Istoric))
+            string mesaj = "Doresti sa stergi istoricul?";
+            string titlu = "Stergere Istoric";
+            if (String.IsNullOrEmpty(_calculatorModel.Istoric)||)
             {
                 _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce salva.");
             }
@@ -163,7 +167,7 @@ namespace GettingStartedWithCSharp
                 else
                 {
                     _messageBoxDisplayService.Show("Istoricul a fost salvat.");
-                    bool clearHistory = _messageBoxDisplayService.HistoryClearing();
+                    bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj, titlu);
                     if (clearHistory == true)
                     {
                         _calculatorModel.Istoric = "";
@@ -178,6 +182,8 @@ namespace GettingStartedWithCSharp
         {
             Button b = (Button)sender;
             string memoryClick = b.Text;
+            string mesaj = "Doresti sa golesti memoria?";
+            string titlu = "Golire Memorie";
 
             if (!_calculatorModel.IsMemoryStored)
             {
@@ -187,7 +193,7 @@ namespace GettingStartedWithCSharp
             switch (memoryClick)
             {
                 case "MC":
-                    _calculatorModel.IsMemoryStored= _messageBoxDisplayService.OnMemoryClear();
+                    _calculatorModel.IsMemoryStored= _messageBoxDisplayService.PromptUser(mesaj,titlu);
                     _calculatorView.DisableMemoryButtons();
                     break;
                 case "MR":

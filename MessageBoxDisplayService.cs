@@ -4,29 +4,26 @@ namespace GettingStartedWithCSharp
 {
     public class MessageBoxDisplayService : IMessageBoxDisplayService
     {
-        public void Show(string message)
+        public void Show(string mesaj)
         {
-            MessageBox.Show(message);
+            MessageBox.Show(mesaj);
         }
 
-        public bool OnMemoryClear()
+        public bool PromptUser(string mesaj, string titlu)
         {
-            bool isMemoryStored = false;
-            string mesaj = "Do you want to clear the memory?";
-            string titlu = "Memory Clear";
             MessageBoxButtons butoane = MessageBoxButtons.YesNo;
             DialogResult rezultat = MessageBox.Show(mesaj, titlu, butoane);
             if (rezultat == DialogResult.Yes)
             {
-                isMemoryStored = false;
+                return true;
             }
-            return isMemoryStored;
+            else return false;
         }
     }
 
     public interface IMessageBoxDisplayService
     {
-        void Show(string message);
-        bool OnMemoryClear();
+        void Show(string mesaj);
+        bool PromptUser(string mesaj, string titlu);
     }
 }

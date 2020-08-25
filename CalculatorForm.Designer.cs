@@ -60,6 +60,7 @@
             this.MMinus = new System.Windows.Forms.Button();
             this.MInfo = new System.Windows.Forms.Button();
             this.MemoryShow = new System.Windows.Forms.ToolTip(this.components);
+            this.EraseHistory = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -74,7 +75,6 @@
             this.Digit1.Tag = "";
             this.Digit1.Text = "1";
             this.Digit1.UseVisualStyleBackColor = true;
-            
             // 
             // Digit7
             // 
@@ -86,7 +86,6 @@
             this.Digit7.Tag = "";
             this.Digit7.Text = "7";
             this.Digit7.UseVisualStyleBackColor = true;
-            
             // 
             // Digit2
             // 
@@ -98,7 +97,6 @@
             this.Digit2.Tag = "";
             this.Digit2.Text = "2";
             this.Digit2.UseVisualStyleBackColor = true;
-            
             // 
             // Digit4
             // 
@@ -110,7 +108,6 @@
             this.Digit4.Tag = "";
             this.Digit4.Text = "4";
             this.Digit4.UseVisualStyleBackColor = true;
-            
             // 
             // Digit3
             // 
@@ -122,7 +119,6 @@
             this.Digit3.Tag = "";
             this.Digit3.Text = "3";
             this.Digit3.UseVisualStyleBackColor = true;
-            
             // 
             // Digit6
             // 
@@ -134,7 +130,6 @@
             this.Digit6.Tag = "";
             this.Digit6.Text = "6";
             this.Digit6.UseVisualStyleBackColor = true;
-            
             // 
             // Digit5
             // 
@@ -146,7 +141,6 @@
             this.Digit5.Tag = "";
             this.Digit5.Text = "5";
             this.Digit5.UseVisualStyleBackColor = true;
-            
             // 
             // Dot
             // 
@@ -158,7 +152,6 @@
             this.Dot.Tag = "";
             this.Dot.Text = ".";
             this.Dot.UseVisualStyleBackColor = true;
-            
             // 
             // Digit9
             // 
@@ -170,7 +163,6 @@
             this.Digit9.Tag = "";
             this.Digit9.Text = "9";
             this.Digit9.UseVisualStyleBackColor = true;
-            
             // 
             // Digit8
             // 
@@ -183,7 +175,6 @@
             this.Digit8.Tag = "";
             this.Digit8.Text = "8";
             this.Digit8.UseVisualStyleBackColor = true;
-           
             // 
             // Division
             // 
@@ -196,7 +187,6 @@
             this.Division.Tag = "";
             this.Division.Text = "/";
             this.Division.UseVisualStyleBackColor = true;
-            
             // 
             // Digit0
             // 
@@ -209,7 +199,6 @@
             this.Digit0.Tag = "";
             this.Digit0.Text = "0";
             this.Digit0.UseVisualStyleBackColor = true;
-            
             // 
             // Substraction
             // 
@@ -222,7 +211,6 @@
             this.Substraction.Tag = "";
             this.Substraction.Text = "-";
             this.Substraction.UseVisualStyleBackColor = true;
-           
             // 
             // Addition
             // 
@@ -234,7 +222,6 @@
             this.Addition.Tag = "";
             this.Addition.Text = "+";
             this.Addition.UseVisualStyleBackColor = true;
-            
             // 
             // Multiplication
             // 
@@ -246,7 +233,6 @@
             this.Multiplication.Tag = "";
             this.Multiplication.Text = "*";
             this.Multiplication.UseVisualStyleBackColor = true;
-           
             // 
             // ClearAll
             // 
@@ -258,7 +244,6 @@
             this.ClearAll.Tag = "";
             this.ClearAll.Text = "&C";
             this.ClearAll.UseVisualStyleBackColor = true;
-            
             // 
             // ClearEntry
             // 
@@ -270,7 +255,6 @@
             this.ClearEntry.Tag = "";
             this.ClearEntry.Text = "C&E";
             this.ClearEntry.UseVisualStyleBackColor = true;
-            
             // 
             // Rezulta
             // 
@@ -282,7 +266,6 @@
             this.Rezulta.Tag = "";
             this.Rezulta.Text = "=";
             this.Rezulta.UseVisualStyleBackColor = true;
-           
             // 
             // ResultBox
             // 
@@ -297,14 +280,14 @@
             this.ResultBox.Text = "0";
             this.ResultBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
-            // equation
+            // Equation
             // 
             this.Equation.AutoSize = true;
             this.Equation.BackColor = System.Drawing.SystemColors.Window;
             this.Equation.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Equation.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.Equation.Location = new System.Drawing.Point(14, 14);
-            this.Equation.Name = "equation";
+            this.Equation.Name = "Equation";
             this.Equation.Size = new System.Drawing.Size(0, 22);
             this.Equation.TabIndex = 19;
             // 
@@ -318,7 +301,6 @@
             this.SquareRoot.Tag = "";
             this.SquareRoot.Text = "sqrt";
             this.SquareRoot.UseVisualStyleBackColor = true;
-          
             // 
             // eventLog1
             // 
@@ -340,11 +322,10 @@
             // 
             this.SaveHistory.Location = new System.Drawing.Point(10, 422);
             this.SaveHistory.Name = "SaveHistory";
-            this.SaveHistory.Size = new System.Drawing.Size(251, 42);
+            this.SaveHistory.Size = new System.Drawing.Size(147, 42);
             this.SaveHistory.TabIndex = 26;
             this.SaveHistory.Text = "Salveaza &Istoricul";
             this.SaveHistory.UseVisualStyleBackColor = true;
-           
             // 
             // MClear
             // 
@@ -357,7 +338,6 @@
             this.MClear.Tag = "";
             this.MClear.Text = "MC";
             this.MClear.UseVisualStyleBackColor = true;
-          
             // 
             // MPlus
             // 
@@ -369,7 +349,6 @@
             this.MPlus.Tag = "";
             this.MPlus.Text = "M+";
             this.MPlus.UseVisualStyleBackColor = true;
-          
             // 
             // MStore
             // 
@@ -381,7 +360,6 @@
             this.MStore.Tag = "";
             this.MStore.Text = "MS";
             this.MStore.UseVisualStyleBackColor = true;
-          
             // 
             // MRestore
             // 
@@ -394,7 +372,6 @@
             this.MRestore.Tag = "";
             this.MRestore.Text = "MR";
             this.MRestore.UseVisualStyleBackColor = true;
-           
             // 
             // MMinus
             // 
@@ -406,7 +383,6 @@
             this.MMinus.Tag = "";
             this.MMinus.Text = "M-";
             this.MMinus.UseVisualStyleBackColor = true;
-      
             // 
             // MInfo
             // 
@@ -419,14 +395,23 @@
             this.MInfo.Tag = "";
             this.MInfo.Text = "M";
             this.MInfo.UseVisualStyleBackColor = true;
-        
             // 
-            // Calculator
+            // EraseHistory
+            // 
+            this.EraseHistory.Location = new System.Drawing.Point(163, 422);
+            this.EraseHistory.Name = "EraseHistory";
+            this.EraseHistory.Size = new System.Drawing.Size(98, 42);
+            this.EraseHistory.TabIndex = 27;
+            this.EraseHistory.Text = "&Sterge Istoricul";
+            this.EraseHistory.UseVisualStyleBackColor = true;
+            // 
+            // CalculatorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ControlDark;
             this.ClientSize = new System.Drawing.Size(273, 474);
+            this.Controls.Add(this.EraseHistory);
             this.Controls.Add(this.MInfo);
             this.Controls.Add(this.MMinus);
             this.Controls.Add(this.MRestore);
@@ -458,7 +443,7 @@
             this.Controls.Add(this.Digit1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "Calculator";
+            this.Name = "CalculatorForm";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Calculator";
@@ -501,6 +486,7 @@
         private System.Windows.Forms.Button MMinus;
         private System.Windows.Forms.Button MInfo;
         private System.Windows.Forms.ToolTip MemoryShow;
+        private System.Windows.Forms.Button EraseHistory;
     }
 }
 

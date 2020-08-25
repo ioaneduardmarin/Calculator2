@@ -4,9 +4,9 @@ namespace GettingStartedWithCSharp
 {
     public class MessageBoxDisplayService : IMessageBoxDisplayService
     {
-        public void Show(string message)
+        public void Show(string mesaj)
         {
-            MessageBox.Show(message);
+            MessageBox.Show(mesaj);
         }
 
         public bool PromptUser(string mesaj, string titlu)
@@ -23,7 +23,7 @@ namespace GettingStartedWithCSharp
 
     public interface IMessageBoxDisplayService
     {
-        void Show(string message);
+        void Show(string mesaj);
         bool PromptUser(string mesaj, string titlu);
     }
 }

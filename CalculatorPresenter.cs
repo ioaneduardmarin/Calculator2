@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static GettingStartedWithCSharp.CalculatorForm;
 
@@ -153,9 +154,11 @@ namespace GettingStartedWithCSharp
         {
             string mesaj = "Doresti sa stergi istoricul?";
             string titlu = "Stergere Istoric";
-            if (String.IsNullOrEmpty(_calculatorModel.Istoric)||)
+            if (String.IsNullOrEmpty(_calculatorModel.Istoric)||!(Regex.Matches(_calculatorModel.Istoric, @"[a-zA-Z0-9]").Count>0))
             {
                 _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce salva.");
+                _calculatorModel.Istoric = "";
+                _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
             }
             else
             {

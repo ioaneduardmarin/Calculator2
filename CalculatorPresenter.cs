@@ -10,15 +10,17 @@ namespace GettingStartedWithCSharp
         private readonly IMessageBoxDisplayService _messageBoxDisplayService;
         private readonly ISaveHistoryService _saveHistoryService;
         private readonly IUtils _utils;
+        private readonly IBusinessLogicClass _businessLogicObject;
         private CalculatorModel _calculatorModel = new CalculatorModel();
-        private string _textAfisat;
-
-        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, IUtils utils)
+        private string _textAfisat = "";
+        
+       public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, IUtils utils, IBusinessLogicClass businessLogicObject)
         {
             this._calculatorView = calculatorView;
             this._messageBoxDisplayService = messageBoxDisplayService;
             this._saveHistoryService = saveHistoryService;
             this._utils = utils;
+            this._businessLogicObject = businessLogicObject;
             calculatorView.DigitClicked += OnDigitClick;
             calculatorView.OperatorClicked += OnOperatorClick;
             calculatorView.ResultClicked += OnResultClick;
@@ -35,7 +37,7 @@ namespace GettingStartedWithCSharp
             { _textAfisat = ""; }
 
             if (_calculatorModel.ResultObtained)
-            { 
+            {
                 _textAfisat = "";
             }
 
@@ -75,54 +77,20 @@ namespace GettingStartedWithCSharp
         {
             _calculatorModel.OperationPressed = false;
             _calculatorModel.Equation = "";
-            switch (_calculatorModel.Operation)
-            {
-                case "+":
-                    _textAfisat = _utils.FormatShownText(_calculatorModel.Value + (decimal)Double.Parse(_textAfisat));
-                    _calculatorView.SetResultBoxText(_textAfisat);
-                    break;
-                case "-":
-                    _textAfisat = _utils.FormatShownText(_calculatorModel.Value - (decimal)Double.Parse(_textAfisat));
-                    _calculatorView.SetResultBoxText(_textAfisat);
-                    break;
-                case "*":
-                    _textAfisat = _utils.FormatShownText(_calculatorModel.Value * (decimal)Double.Parse(_textAfisat));
-                    _calculatorView.SetResultBoxText(_textAfisat);
-                    break;
-                case "/":
-                    try
-                    {
-                        _textAfisat = _utils.FormatShownText(_calculatorModel.Value / (decimal)Double.Parse(_textAfisat));
-                        _calculatorView.SetResultBoxText(_textAfisat);
-                    }
-                    catch (DivideByZeroException)
-                    {
-                        _messageBoxDisplayService.Show("Impartirea la 0 nu este o operatie valida.");
-                        _textAfisat = "operatie nevalida";
-                        _calculatorView.SetResultBoxText(_textAfisat);
-                    }
-                    break;
-                case "sqrt":
-                    if (_calculatorModel.Value < 0)
-                    {
+            _textAfisat = _businessLogicObject.WhenResultClick(_calculatorModel.Operation, _textAfisat, _calculatorModel.Value);
 
-                        _messageBoxDisplayService.Show("Extragerea radacinii patrate dintr-un numar negativ nu este o operatie valida.");
-                        _textAfisat = "operatie nevalida";
-                        _calculatorView.SetResultBoxText(_textAfisat);
-                    }
-                    else
-                    {
-                        _textAfisat = _utils.FormatShownText((decimal)(Math.Sqrt((double)_calculatorModel.Value)));
-                        _calculatorView.SetResultBoxText(_textAfisat);
-                    }
-                    break;
-                default:
-                    break;
+            if (Regex.Matches(_textAfisat, @"[a-zA-Z]").Count > 0)
+            { _messageBoxDisplayService.Show("Operatia nu este valida"); }
+            else
+            {
+                _textAfisat = _utils.FormatShownText(Convert.ToDecimal(_textAfisat));
             }
             _calculatorModel.ResultObtained = true;
+            _calculatorView.SetResultBoxText(_textAfisat);
             _calculatorModel.Istoric += (_textAfisat + ", ");
             _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
         }
+
 
         private void OnClearAllCLick(object sender, EventArgs e)
         {
@@ -131,6 +99,8 @@ namespace GettingStartedWithCSharp
             _calculatorModel.Istoric = "";
             _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
             _calculatorModel.Value = 0;
+            _calculatorModel.Equation = "";
+            _calculatorView.EquationLabel(_calculatorModel.Equation);
         }
 
         private void OnEraseHistory(object sender, EventArgs e)
@@ -186,7 +156,12 @@ namespace GettingStartedWithCSharp
         private void OnMemoryClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
-            string memoryClick = b.Text;
+            WhenMemoryClick(b.Text);
+        }
+
+
+        public void WhenMemoryClick(string memoryClick)
+        {
             string mesaj = "Doresti sa golesti memoria?";
             string titlu = "Golire Memorie";
 
@@ -196,6 +171,34 @@ namespace GettingStartedWithCSharp
             }
 
             switch (memoryClick)
+            {
+                case "MC":
+                    _calculatorModel.IsMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
+                    _calculatorView.DisableMemoryButtons();
+                    break;
+                case "MR":
+                    _textAfisat = _utils.FormatShownText(_calculatorModel.Memory);
+                    _calculatorView.SetResultBoxText(_textAfisat);
+                    break;
+                case "MS":
+                    _calculatorModel.Memory = (decimal)Double.Parse(_textAfisat);
+                    _calculatorModel.IsMemoryStored = true;
+                    _calculatorView.EnableMemoryButtons();
+                    break;
+                case "M+":
+                    _calculatorModel.Memory = _businessLogicObject.MemAdd(_calculatorModel.Memory, Convert.ToDecimal(_textAfisat));
+                    break;
+                case "M-":
+                    _calculatorModel.Memory -= _businessLogicObject.MemDiff(_calculatorModel.Memory, Convert.ToDecimal(_textAfisat));
+                    break;
+                case "M":
+                    _calculatorView.MemoryButtonShow(_utils.FormatShownText(_calculatorModel.Memory));
+                    break;
+                default:
+                    break;
+            }
+
+            /*switch (memoryClick)
             {
                 case "MC":
                     _calculatorModel.IsMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
@@ -222,7 +225,7 @@ namespace GettingStartedWithCSharp
                     break;
                 default:
                     break;
-            }
+            }*/
         }
 
     }

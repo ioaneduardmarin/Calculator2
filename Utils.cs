@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GettingStartedWithCSharp
 {
-    public class Utils
+    public class Utils:IUtils
     {
 
         public string FormatShownText(decimal number)

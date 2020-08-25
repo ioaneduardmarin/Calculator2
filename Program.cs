@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace GettingStartedWithCSharp
 {
@@ -15,7 +14,9 @@ namespace GettingStartedWithCSharp
             var calcView = new CalculatorForm();
             var messageService = new MessageBoxDisplayService();
             var saveHist = new SaveHistoryService();
-            var CalcPresenter = new CalculatorPresenter(calcView,messageService, saveHist);
+            var utils = new Utils();
+            var businessLogicObject = new BusinessLogicClass();
+            var CalcPresenter = new CalculatorPresenter(calcView, messageService, saveHist, utils, businessLogicObject);
             Application.Run(calcView);
         }
 

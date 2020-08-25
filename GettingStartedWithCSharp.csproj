@@ -55,6 +55,7 @@
     <Compile Include="CalculatorForm.Designer.cs">
       <DependentUpon>CalculatorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="BusinessLogicClass.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="SaveHistoryService.cs" />
     <Compile Include="MessageBoxDisplayService.cs" />
@@ -85,8 +86,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Output\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

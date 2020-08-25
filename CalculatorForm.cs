@@ -147,9 +147,7 @@ namespace GettingStartedWithCSharp
             }
         }
 
-        public string TxtMemoryShow { get; set; }
-
-        public void SetResultBoxText(string rezultat)
+         public void SetResultBoxText(string rezultat)
         {
             ResultBox.Text = rezultat;
         }
@@ -197,6 +195,5 @@ namespace GettingStartedWithCSharp
         void SetResultBoxText(string rezultat);
         void EnableMemoryButtons();
         void DisableMemoryButtons();
-        string TxtMemoryShow { get; set; }
     }
 }

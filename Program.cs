@@ -22,7 +22,7 @@ namespace GettingStartedWithCSharp
 
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var message = String.Format("Sorry, something went wrong.\r\n" +
+            var message = String.Format("A avut loc o eroare.\r\n" +
                 "{0}\r\n" +
                 "Please contact support.",
                 ((Exception)e.ExceptionObject).Message);

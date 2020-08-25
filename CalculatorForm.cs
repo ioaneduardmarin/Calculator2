@@ -135,6 +135,18 @@ namespace GettingStartedWithCSharp
             }
         }
 
+        public event EventHandler EraseHistoryClicked
+        {
+            add
+            {
+                EraseHistory.Click += value;
+            }
+            remove
+            {
+                EraseHistory.Click -= value;
+            }
+        }
+
         public string TxtMemoryShow { get; set; }
 
         public void SetResultBoxText(string rezultat)
@@ -160,6 +172,7 @@ namespace GettingStartedWithCSharp
             MInfo.Enabled = true;
             MRestore.Enabled = true;
         }
+       
         public void DisableMemoryButtons()
         {
             MClear.Enabled = false;
@@ -167,7 +180,7 @@ namespace GettingStartedWithCSharp
             MRestore.Enabled = false;
         }
     }
-   
+
     public interface ICalculatorView
     {
         event EventHandler DigitClicked;
@@ -177,6 +190,7 @@ namespace GettingStartedWithCSharp
         event EventHandler ClearAllClicked;
         event EventHandler SaveHistoryClicked;
         event EventHandler ResultClicked;
+        event EventHandler EraseHistoryClicked;
         void MemoryButtonShow(string tooltipMemorie);
         void EquationLabel(string ecuatiePartiala);
         void SetHistoryBoxText(string istoric);

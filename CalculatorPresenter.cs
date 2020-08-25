@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static GettingStartedWithCSharp.CalculatorForm;
 
@@ -24,6 +25,7 @@ namespace GettingStartedWithCSharp
             calculatorView.MemoryClicked += OnMemoryClick;
             calculatorView.ClearAllClicked += OnClearAllCLick;
             calculatorView.ClearEntryClicked += OnClearEntryClick;
+            calculatorView.EraseHistoryClicked += OnEraseHistory;
         }
 
         private void OnDigitClick(object sender, EventArgs e)
@@ -129,22 +131,52 @@ namespace GettingStartedWithCSharp
             _calculatorModel.Value = 0;
         }
 
-        private void OnSaveHistoryClick(object sender, EventArgs e)
+        private void OnEraseHistory(object sender, EventArgs e)
         {
-            bool isHistorySaved = false;
-            isHistorySaved =_saveHistoryService.SaveHistory(_calculatorModel.Istoric);
-            if (isHistorySaved == false)
+            string mesaj = "Doresti sa stergi istoricul?";
+            string titlu = "Stergere Istoric";
+            if (String.IsNullOrEmpty(_calculatorModel.Istoric))
             {
-                _messageBoxDisplayService.Show("Istoricul nu a fost salvat");
+                _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce sterge.");
             }
             else
             {
-                _messageBoxDisplayService.Show("Istoricul a fost salvat.");
-                _calculatorModel.Rezultat = "";
-                _calculatorView.SetResultBoxText(_calculatorModel.Rezultat);
+                bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj,titlu);
+                if (clearHistory == true)
+                {
+                    _calculatorModel.Istoric = "";
+                    _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+                }
+            }
+        }
+
+        private void OnSaveHistoryClick(object sender, EventArgs e)
+        {
+            string mesaj = "Doresti sa stergi istoricul?";
+            string titlu = "Stergere Istoric";
+            if (String.IsNullOrEmpty(_calculatorModel.Istoric)||!(Regex.Matches(_calculatorModel.Istoric, @"[a-zA-Z0-9]").Count>0))
+            {
+                _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce salva.");
                 _calculatorModel.Istoric = "";
                 _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
-                _calculatorModel.Value = 0;
+            }
+            else
+            {
+                bool isHistorySaved = _saveHistoryService.SaveHistory(_calculatorModel.Istoric);
+                if (isHistorySaved == false)
+                {
+                    _messageBoxDisplayService.Show("Istoricul nu a fost salvat");
+                }
+                else
+                {
+                    _messageBoxDisplayService.Show("Istoricul a fost salvat.");
+                    bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj, titlu);
+                    if (clearHistory == true)
+                    {
+                        _calculatorModel.Istoric = "";
+                        _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+                    }
+                }
             }
 
         }
@@ -153,6 +185,8 @@ namespace GettingStartedWithCSharp
         {
             Button b = (Button)sender;
             string memoryClick = b.Text;
+            string mesaj = "Doresti sa golesti memoria?";
+            string titlu = "Golire Memorie";
 
             if (!_calculatorModel.IsMemoryStored)
             {
@@ -162,7 +196,7 @@ namespace GettingStartedWithCSharp
             switch (memoryClick)
             {
                 case "MC":
-                    _calculatorModel.IsMemoryStored= _messageBoxDisplayService.OnMemoryClear();
+                    _calculatorModel.IsMemoryStored= _messageBoxDisplayService.PromptUser(mesaj,titlu);
                     _calculatorView.DisableMemoryButtons();
                     break;
                 case "MR":

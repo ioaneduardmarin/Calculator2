@@ -8,7 +8,6 @@
         public decimal Memory { get; set; }
         public bool OperationPressed { get; set; }
         public bool ResultObtained { get; set; }
-        public string Rezultat { get; set; }
         public string Istoric { get; set; }
         public string Equation { get; set; }
     }

@@ -11,6 +11,7 @@ namespace GettingStartedWithCSharp
         private readonly IMessageBoxDisplayService _messageBoxDisplayService;
         private readonly ISaveHistoryService _saveHistoryService;
         private CalculatorModel _calculatorModel = new CalculatorModel();
+        private string _rezultat;
 
         public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService)
         {

@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
-using static GettingStartedWithCSharp.CalculatorForm;
 
 namespace GettingStartedWithCSharp
 {
     public partial class CalculatorForm : Form, ICalculatorView
     {
-
         public CalculatorForm()
         {
             InitializeComponent();
-
         }
 
         public event EventHandler DigitClicked

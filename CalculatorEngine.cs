@@ -2,11 +2,9 @@
 using System.Linq;
 
 namespace GettingStartedWithCSharp
-
 {
     public class CalculatorEngine : ICalculatorEngine
     {
-
         public decimal Value { get; set; } = 0m;
         public decimal Memory { get; set; }
         public bool HasMemoryStored { get; set; } = false;
@@ -16,7 +14,6 @@ namespace GettingStartedWithCSharp
         {
             _messageBoxDisplayService = messageBoxDisplayService;
         }
-
 
         public string CalculusBehindResultClick(string operation, string numarAfisat)
         {

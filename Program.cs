@@ -14,11 +14,10 @@ namespace GettingStartedWithCSharp
             var calcView = new CalculatorForm();
             var messageService = new MessageBoxDisplayService();
             var saveHist = new SaveHistoryService();
-            var businessLogicObject = new BusinessLogicClass();
+            var businessLogicObject = new CalculatorEngine(messageService);
             var CalcPresenter = new CalculatorPresenter(calcView, messageService, saveHist, businessLogicObject);
             Application.Run(calcView);
         }
-
 
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
@@ -26,10 +25,7 @@ namespace GettingStartedWithCSharp
                 "{0}\r\n" +
                 "Please contact support.",
                 ((Exception)e.ExceptionObject).Message);
-
-            Console.WriteLine("ERROR {0}: {1}",
-                DateTimeOffset.Now, e.ExceptionObject);
-
+            Console.WriteLine("ERROR {0}: {1}", DateTimeOffset.Now, e.ExceptionObject);
             MessageBox.Show(message, "Unexpected Error");
         }
     }

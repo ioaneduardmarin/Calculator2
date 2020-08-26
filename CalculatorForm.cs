@@ -147,7 +147,7 @@ namespace GettingStartedWithCSharp
             }
         }
 
-         public void SetResultBoxText(string rezultat)
+        public void SetResultBoxText(string rezultat)
         {
             ResultBox.Text = rezultat;
         }
@@ -170,7 +170,7 @@ namespace GettingStartedWithCSharp
             MInfo.Enabled = true;
             MRestore.Enabled = true;
         }
-       
+
         public void DisableMemoryButtons()
         {
             MClear.Enabled = false;

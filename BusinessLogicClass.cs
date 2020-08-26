@@ -6,26 +6,26 @@ namespace GettingStartedWithCSharp
     public class BusinessLogicClass : IBusinessLogicClass
     {
         CalculatorModel _calculatorModel = new CalculatorModel();
-
-        public string WhenResultClick(string operation, string numarAfisat, decimal value)
+        
+        public string WhenResultClick(string operation, string numarAfisat)
         {
             switch (operation)
             {
                 case "+":
-                    numarAfisat = Convert.ToString(value + (decimal)Double.Parse(numarAfisat));
+                    numarAfisat = Convert.ToString(_calculatorModel.Value + (decimal)Double.Parse(numarAfisat));
                     return numarAfisat;
                 case "-":
-                    numarAfisat = Convert.ToString(value - (decimal)double.Parse(numarAfisat));
+                    numarAfisat = Convert.ToString(_calculatorModel.Value - (decimal)double.Parse(numarAfisat));
 
                     return numarAfisat; ;
                 case "*":
-                    numarAfisat = Convert.ToString(value * (decimal)double.Parse(numarAfisat));
+                    numarAfisat = Convert.ToString(_calculatorModel.Value * (decimal)double.Parse(numarAfisat));
 
                     return numarAfisat;
                 case "/":
                     try
                     {
-                        numarAfisat = Convert.ToString((value / (decimal)double.Parse(numarAfisat)));
+                        numarAfisat = Convert.ToString((_calculatorModel.Value / (decimal)double.Parse(numarAfisat)));
                     }
                     catch (DivideByZeroException)
                     {
@@ -39,7 +39,7 @@ namespace GettingStartedWithCSharp
                     }
                     else
                     {
-                        numarAfisat = Convert.ToString((decimal)(Math.Sqrt((double)value)));
+                        numarAfisat = Convert.ToString((decimal)(Math.Sqrt((double)_calculatorModel.Value)));
                     }
                     return numarAfisat;
                 default:
@@ -47,26 +47,80 @@ namespace GettingStartedWithCSharp
             }
         }
 
-
-        public decimal MemAdd(decimal memoryValue, decimal newValue)
+        public string GetFormattedShownText(string textAfisat) 
         {
-            memoryValue += newValue;
-            return memoryValue;
+            textAfisat= FormatShownText(Convert.ToDecimal(textAfisat));
+            return textAfisat;
         }
 
-        public decimal MemDiff(decimal memoryValue, decimal newValue)
+        public void MemoryAdd(decimal newValue)
         {
-            memoryValue -= newValue;
-            return memoryValue;
+            _calculatorModel.Memory += newValue;
+        }
+
+        public void MemoryDiff(decimal newValue)
+        {
+            _calculatorModel.Memory -= newValue;
+        }
+
+        public void MemoryStore(string textAfisat)
+        {
+            _calculatorModel.Memory = (decimal)Double.Parse(textAfisat);
+        }
+
+        public string MemoryRestore()
+        {
+            string text = FormatShownText(_calculatorModel.Memory);
+            return text;
+        }
+
+        public void MemoryClear()
+        {
+            _calculatorModel.Memory = 0;
+        }
+
+        public string MemoryShow()
+        {
+            string text = FormatShownText(_calculatorModel.Memory);
+            return text;
+        }
+
+        public string FormatShownText(decimal number)
+        {
+            return number.ToString("0.000");
+        }
+
+        public void GetValue(string textAfisat)
+        {
+            _calculatorModel.Value=(decimal)(Double.Parse(textAfisat));
+        }
+
+        public decimal ReturnValue()
+        {
+            return _calculatorModel.Value;
+        }
+
+        public decimal ClearValue()
+        {
+            _calculatorModel.Value = 0;
+            return _calculatorModel.Value;
         }
     }
 }
 
 public interface IBusinessLogicClass
 {
-    string WhenResultClick(string operation, string textAfisat, decimal value);
-    decimal MemAdd(decimal memoryValue, decimal newValue);
-    decimal MemDiff(decimal memoryValue, decimal newValue);
+    string WhenResultClick(string operation, string textAfisat);
+    string GetFormattedShownText(string textAfisat);
+    void MemoryAdd(decimal newValue);
+    void MemoryDiff(decimal newValue);
+    void MemoryStore(string textAfisat);
+    string MemoryRestore();
+    void MemoryClear();
+    string MemoryShow();
+    void GetValue(string textAfisat);
+    decimal ReturnValue();
+    decimal ClearValue();
 }
 
 

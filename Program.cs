@@ -14,9 +14,8 @@ namespace GettingStartedWithCSharp
             var calcView = new CalculatorForm();
             var messageService = new MessageBoxDisplayService();
             var saveHist = new SaveHistoryService();
-            var utils = new Utils();
             var businessLogicObject = new BusinessLogicClass();
-            var CalcPresenter = new CalculatorPresenter(calcView, messageService, saveHist, utils, businessLogicObject);
+            var CalcPresenter = new CalculatorPresenter(calcView, messageService, saveHist, businessLogicObject);
             Application.Run(calcView);
         }
 

@@ -9,17 +9,20 @@ namespace GettingStartedWithCSharp
         private readonly ICalculatorView _calculatorView;
         private readonly IMessageBoxDisplayService _messageBoxDisplayService;
         private readonly ISaveHistoryService _saveHistoryService;
-        private readonly IUtils _utils;
         private readonly IBusinessLogicClass _businessLogicObject;
-        private CalculatorModel _calculatorModel = new CalculatorModel();
         private string _textAfisat = "";
-        
-       public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, IUtils utils, IBusinessLogicClass businessLogicObject)
+        private string _operation = "";
+        private string _equation = "";
+        private string _istoric = "";
+        private bool _operationPressed = false;
+        private bool _resultObtained = false;
+        private bool _isMemoryStored = false;
+
+        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, IBusinessLogicClass businessLogicObject)
         {
             this._calculatorView = calculatorView;
             this._messageBoxDisplayService = messageBoxDisplayService;
             this._saveHistoryService = saveHistoryService;
-            this._utils = utils;
             this._businessLogicObject = businessLogicObject;
             calculatorView.DigitClicked += OnDigitClick;
             calculatorView.OperatorClicked += OnOperatorClick;
@@ -33,16 +36,16 @@ namespace GettingStartedWithCSharp
 
         private void OnDigitClick(object sender, EventArgs e)
         {
-            if (_textAfisat == "0" || (_calculatorModel.OperationPressed))
+            if (_textAfisat == "0" || (_operationPressed))
             { _textAfisat = ""; }
 
-            if (_calculatorModel.ResultObtained)
+            if (_resultObtained)
             {
                 _textAfisat = "";
             }
 
-            _calculatorModel.ResultObtained = false;
-            _calculatorModel.OperationPressed = false;
+            _resultObtained = false;
+            _operationPressed = false;
             Button b = (Button)sender;
             _textAfisat += b.Text;
             _calculatorView.SetResultBoxText(_textAfisat);
@@ -57,57 +60,57 @@ namespace GettingStartedWithCSharp
         private void OnOperatorClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
-            _calculatorModel.Operation = b.Text;
+            _operation = b.Text;
             try
             {
-                _calculatorModel.Value = (decimal)(Double.Parse(_textAfisat));
+             _businessLogicObject.GetValue(_textAfisat);
             }
             catch (System.FormatException)
             {
                 _messageBoxDisplayService.Show("Introduceti o valoare valida");
                 _textAfisat = "0";
-                _calculatorModel.Equation = "0";
+                _equation = "0";
             }
-            _calculatorModel.OperationPressed = true;
-            _calculatorModel.Equation = _calculatorModel.Value + " " + _calculatorModel.Operation;
-            _calculatorView.EquationLabel(_calculatorModel.Equation);
+            _operationPressed = true;
+            _equation = _businessLogicObject.ReturnValue() + " " + _operation;
+            _calculatorView.EquationLabel(_equation);
         }
 
         private void OnResultClick(object sender, EventArgs e)
         {
-            _calculatorModel.OperationPressed = false;
-            _calculatorModel.Equation = "";
-            _textAfisat = _businessLogicObject.WhenResultClick(_calculatorModel.Operation, _textAfisat, _calculatorModel.Value);
+            _operationPressed = false;
+            _equation = "";
+            _textAfisat = _businessLogicObject.WhenResultClick(_operation, _textAfisat);
 
             if (Regex.Matches(_textAfisat, @"[a-zA-Z]").Count > 0)
             { _messageBoxDisplayService.Show("Operatia nu este valida"); }
             else
             {
-                _textAfisat = _utils.FormatShownText(Convert.ToDecimal(_textAfisat));
+                _textAfisat = _businessLogicObject.GetFormattedShownText(_textAfisat);
             }
-            _calculatorModel.ResultObtained = true;
+            _resultObtained = true;
             _calculatorView.SetResultBoxText(_textAfisat);
-            _calculatorModel.Istoric += (_textAfisat + ", ");
-            _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+            _istoric += (_textAfisat + ", ");
+            _calculatorView.SetHistoryBoxText(_istoric);
         }
 
 
         private void OnClearAllCLick(object sender, EventArgs e)
         {
+            _businessLogicObject.ClearValue();
             _textAfisat = "";
             _calculatorView.SetResultBoxText(_textAfisat);
-            _calculatorModel.Istoric = "";
-            _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
-            _calculatorModel.Value = 0;
-            _calculatorModel.Equation = "";
-            _calculatorView.EquationLabel(_calculatorModel.Equation);
+            _istoric = "";
+            _calculatorView.SetHistoryBoxText(_istoric);
+            _equation = "";
+            _calculatorView.EquationLabel(_equation);
         }
 
         private void OnEraseHistory(object sender, EventArgs e)
         {
             string mesaj = "Doresti sa stergi istoricul?";
             string titlu = "Stergere Istoric";
-            if (String.IsNullOrEmpty(_calculatorModel.Istoric))
+            if (String.IsNullOrEmpty(_istoric))
             {
                 _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce sterge.");
             }
@@ -116,8 +119,8 @@ namespace GettingStartedWithCSharp
                 bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj, titlu);
                 if (clearHistory == true)
                 {
-                    _calculatorModel.Istoric = "";
-                    _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+                    _istoric = "";
+                    _calculatorView.SetHistoryBoxText(_istoric);
                 }
             }
         }
@@ -126,15 +129,15 @@ namespace GettingStartedWithCSharp
         {
             string mesaj = "Doresti sa stergi istoricul?";
             string titlu = "Stergere Istoric";
-            if (String.IsNullOrEmpty(_calculatorModel.Istoric) || !(Regex.Matches(_calculatorModel.Istoric, @"[a-zA-Z0-9]").Count > 0))
+            if (String.IsNullOrEmpty(_istoric) || !(Regex.Matches(_istoric, @"[a-zA-Z0-9]").Count > 0))
             {
                 _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce salva.");
-                _calculatorModel.Istoric = "";
-                _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+                _istoric = "";
+                _calculatorView.SetHistoryBoxText(_istoric);
             }
             else
             {
-                bool isHistorySaved = _saveHistoryService.SaveHistory(_calculatorModel.Istoric);
+                bool isHistorySaved = _saveHistoryService.SaveHistory(_istoric);
                 if (isHistorySaved == false)
                 {
                     _messageBoxDisplayService.Show("Istoricul nu a fost salvat");
@@ -145,8 +148,8 @@ namespace GettingStartedWithCSharp
                     bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj, titlu);
                     if (clearHistory == true)
                     {
-                        _calculatorModel.Istoric = "";
-                        _calculatorView.SetHistoryBoxText(_calculatorModel.Istoric);
+                        _istoric = "";
+                        _calculatorView.SetHistoryBoxText(_istoric);
                     }
                 }
             }
@@ -165,7 +168,7 @@ namespace GettingStartedWithCSharp
             string mesaj = "Doresti sa golesti memoria?";
             string titlu = "Golire Memorie";
 
-            if (!_calculatorModel.IsMemoryStored)
+            if (!_isMemoryStored)
             {
                 _calculatorView.DisableMemoryButtons();
             }
@@ -173,61 +176,31 @@ namespace GettingStartedWithCSharp
             switch (memoryClick)
             {
                 case "MC":
-                    _calculatorModel.IsMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
+                    _businessLogicObject.MemoryClear();
+                    _isMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
                     _calculatorView.DisableMemoryButtons();
                     break;
                 case "MR":
-                    _textAfisat = _utils.FormatShownText(_calculatorModel.Memory);
+                    _textAfisat = _businessLogicObject.MemoryRestore();
                     _calculatorView.SetResultBoxText(_textAfisat);
                     break;
                 case "MS":
-                    _calculatorModel.Memory = (decimal)Double.Parse(_textAfisat);
-                    _calculatorModel.IsMemoryStored = true;
+                    _businessLogicObject.MemoryStore(_textAfisat);
+                    _isMemoryStored = true;
                     _calculatorView.EnableMemoryButtons();
                     break;
                 case "M+":
-                    _calculatorModel.Memory = _businessLogicObject.MemAdd(_calculatorModel.Memory, Convert.ToDecimal(_textAfisat));
+                    _businessLogicObject.MemoryAdd(Convert.ToDecimal(_textAfisat));
                     break;
                 case "M-":
-                    _calculatorModel.Memory -= _businessLogicObject.MemDiff(_calculatorModel.Memory, Convert.ToDecimal(_textAfisat));
+                    _businessLogicObject.MemoryDiff(Convert.ToDecimal(_textAfisat));
                     break;
                 case "M":
-                    _calculatorView.MemoryButtonShow(_utils.FormatShownText(_calculatorModel.Memory));
+                    _calculatorView.MemoryButtonShow(_businessLogicObject.MemoryShow());
                     break;
                 default:
                     break;
             }
-
-            /*switch (memoryClick)
-            {
-                case "MC":
-                    _calculatorModel.IsMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
-                    _calculatorView.DisableMemoryButtons();
-                    break;
-                case "MR":
-                    _textAfisat = _utils.FormatShownText(_calculatorModel.Memory);
-                    _calculatorView.SetResultBoxText(_textAfisat);
-                    break;
-                case "MS":
-                    _calculatorModel.Memory = (decimal)Double.Parse(_textAfisat);
-                    _calculatorModel.IsMemoryStored = true;
-                    _calculatorView.EnableMemoryButtons();
-                    break;
-                case "M+":
-                    _calculatorModel.Memory += (decimal)(Double.Parse(_textAfisat));
-                    break;
-                case "M-":
-                    _calculatorModel.Memory -= (decimal)Double.Parse(_textAfisat);
-                    break;
-                case "M":
-                    _calculatorView.TxtMemoryShow = _utils.FormatShownText(_calculatorModel.Memory);
-                    _calculatorView.MemoryButtonShow(_calculatorView.TxtMemoryShow);
-                    break;
-                default:
-                    break;
-            }*/
         }
-
     }
-
 }

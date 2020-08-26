@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace GettingStartedWithCSharp
 {
-    public class SaveHistoryService : ISaveHistoryService
+    class SaveHistoryService : ISaveHistoryService
     {
         public bool SaveHistory(string istoric)
         {

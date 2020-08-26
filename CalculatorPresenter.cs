@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -10,6 +11,7 @@ namespace GettingStartedWithCSharp
         private readonly IMessageBoxDisplayService _messageBoxDisplayService;
         private readonly ISaveHistoryService _saveHistoryService;
         private readonly ICalculatorEngine _calculatorEngine;
+        private readonly IUtils _utils;
         private string _textAfisat = ""; //Acest camp preia valorile introduse odata cu apasarea butoanelor caracteristce cifrelor
         private string _operation = ""; //Acest camp preia valorile introduse odata cu apasarea butoanelor caracteristce operatorilor
         private string _equation = ""; //Acest camp arata operatia aflata in desfasurare in prezent: este alcatuit din campurile _textAfisat si _operatie
@@ -17,12 +19,13 @@ namespace GettingStartedWithCSharp
         private bool _isoperationPressed = false; //Acest camp verifica daca a fost apasat vreun buton caracteristic operatorilor
         private bool _isresultObtained = false; //Acest buton verifica daca a fost apasat butonul "Rezuta"
 
-        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, ICalculatorEngine businessLogicObject)
+        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, ICalculatorEngine businessLogicObject, IUtils utils)
         {
             _calculatorView = calculatorView;
             _messageBoxDisplayService = messageBoxDisplayService;
             _saveHistoryService = saveHistoryService;
             _calculatorEngine = businessLogicObject;
+            _utils = utils;
             calculatorView.DigitClicked += OnDigitClick;
             calculatorView.OperatorClicked += OnOperatorClick;
             calculatorView.ResultClicked += OnResultClick;
@@ -57,9 +60,9 @@ namespace GettingStartedWithCSharp
             _operation = b.Text;
             try
             {
-                _calculatorEngine.SetValue(_textAfisat);
+                _textAfisat =Convert.ToString(_calculatorEngine.GetNumberToBeShown(_operation,Convert.ToDecimal(_textAfisat)));
                 _isoperationPressed = true;
-                _equation = _calculatorEngine.GetValue() + " " + _operation;
+                _equation = _textAfisat + " " + _operation;
                 _calculatorView.EquationLabel(_equation);
             }
             catch (System.FormatException)
@@ -77,7 +80,7 @@ namespace GettingStartedWithCSharp
             _equation = "";
             try
             {
-                _textAfisat = _calculatorEngine.CalculusBehindResultClick(_operation, _textAfisat);
+                _textAfisat = Convert.ToString(_calculatorEngine.GetNumberToBeShown(_operation, Convert.ToDecimal(_textAfisat)));
             }
             catch (ArgumentException argEx)
             {
@@ -91,7 +94,7 @@ namespace GettingStartedWithCSharp
             {
                 try
                 {
-                    _textAfisat = _calculatorEngine.GetFormattedShownText(_textAfisat);
+                    _textAfisat = GetFormattedNumberForDisplay(_textAfisat);
                 }
                 catch (FormatException formatEx)
                 {
@@ -203,6 +206,19 @@ namespace GettingStartedWithCSharp
             else
             {
                 _calculatorView.EnableMemoryButtons();
+            }
+        }
+
+        private string GetFormattedNumberForDisplay(string textAfisat)
+        {
+            if (textAfisat.ToCharArray().Count(c => c == '.') > 1)
+            {
+                throw new FormatException(String.Format("Aceasta nu este o valoare valida."));
+            }
+            else
+            {
+                textAfisat = _utils.FormatShownText(Convert.ToDecimal(textAfisat));
+                return textAfisat;
             }
         }
     }

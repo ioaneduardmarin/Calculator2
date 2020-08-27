@@ -4,16 +4,16 @@ namespace GettingStartedWithCSharp
 {
     public class MessageBoxDisplayService : IMessageBoxDisplayService
     {
-        public void Show(string mesaj)
+        public void Show(string message)
         {
-            MessageBox.Show(mesaj);
+            MessageBox.Show(message);
         }
 
-        public bool PromptUser(string mesaj, string titlu)
+        public bool PromptUser(string message, string title)
         {
-            MessageBoxButtons butoane = MessageBoxButtons.YesNo;
-            DialogResult rezultat = MessageBox.Show(mesaj, titlu, butoane);
-            if (rezultat == DialogResult.Yes)
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result = MessageBox.Show(message, title, buttons);
+            if (result == DialogResult.Yes)
             {
                 return true;
             }
@@ -23,7 +23,7 @@ namespace GettingStartedWithCSharp
 
     public interface IMessageBoxDisplayService
     {
-        void Show(string mesaj);
-        bool PromptUser(string mesaj, string titlu);
+        void Show(string message);
+        bool PromptUser(string message, string title);
     }
 }

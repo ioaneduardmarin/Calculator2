@@ -12,21 +12,21 @@ namespace GettingStartedWithCSharp
         private readonly ISaveHistoryService _saveHistoryService;
         private readonly ICalculatorEngine _calculatorEngine;
         //Preia valorile introduse odata cu apasarea butoanelor caracteristce cifrelor
-        private string _textAfisat = "";
+        private string _shownText = "";
         //Preia valorile introduse odata cu apasarea butoanelor caracteristce operatorilor
         private string _operation = "";
-        //Arata operatia aflata in desfasurare in prezent: este alcatuit din campurile _textAfisat si _operatie
+        //Arata operatia aflata in desfasurare in prezent: este alcatuit din campurile _shownText si showText
         private string _equation = "";
-        //Arata istoricul operatiilor realizate. El este realizat prin concatenarea la acesta a campului _textAfisat odata cu apasarea butonului "Rezulta" 
-        private string _istoric = "";
+        //Arata istoricul operatiilor realizate. El este realizat prin concatenarea la acesta a campului _shownText odata cu apasarea butonului "Rezulta" 
+        private string _history = "";
         //Verifica daca a fost apasat vreun buton caracteristic operatorilor
-        private bool _isOperatorPressed = false;
+        private bool _isOperatorPressed;
         //Verifica daca a fost apasat butonul "Rezulta"
-        private bool _isResultObtained = false;
+        private bool _isResultObtained;
         //Verifica daca a fost apasat un buton caracteristic cifrelor
-        private bool _isDigitPressed = false;
+        private bool _isDigitPressed;
         //Preia valoarea primita de la calculator pentru a o afisa in cadrul View-ului
-        private string _textDeAfisat;
+        private string _textToBeShown;
 
         public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, ICalculatorEngine businessLogicObject)
         {
@@ -46,20 +46,20 @@ namespace GettingStartedWithCSharp
 
         private void OnDigitClick(object sender, EventArgs e)
         {
-            if (_textAfisat == "0" || _isOperatorPressed || _isResultObtained)
-            { _textAfisat = ""; }
+            if (_shownText == "0" || _isOperatorPressed || _isResultObtained)
+            { _shownText = ""; }
             _isDigitPressed = true;
             _isResultObtained = false;
             _isOperatorPressed = false;
             Button b = (Button)sender;
-            _textAfisat += b.Text;
-            _calculatorView.SetResultBoxText(_textAfisat);
+            _shownText += b.Text;
+            _calculatorView.SetResultBoxText(_shownText);
         }
 
         private void OnClearEntryClick(object sender, EventArgs e)
         {
-            _textAfisat = "0";
-            _calculatorView.SetResultBoxText(_textAfisat);
+            _shownText = "0";
+            _calculatorView.SetResultBoxText(_shownText);
         }
 
         private void OnOperatorClick(object sender, EventArgs e)
@@ -68,15 +68,15 @@ namespace GettingStartedWithCSharp
             _operation = b.Text;
             try
             {
-                _calculatorEngine.SubmitOperation("=", Convert.ToDecimal(_textAfisat));
+                _calculatorEngine.SubmitOperation("=", Convert.ToDecimal(_shownText));
                 _isOperatorPressed = true;
-                _equation = _textAfisat + " " + _operation;
+                _equation = _shownText + " " + _operation;
                 _calculatorView.EquationLabel(_equation);
             }
-            catch (System.FormatException)
+            catch (FormatException)
             {
-                _messageBoxDisplayService.Show("Introduceti o valoare valida");
-                _textAfisat = "0";
+                _messageBoxDisplayService.Show("Enter a valid value");
+                _shownText = "0";
                 _equation = "0";
                 //vreau ca operatia sa ramana salvata in eventualitatea in care userul a realizat din greseala o operatie "nevalida" si doreste sa continue efectuarea acesteia, cu un operand valid, dupa ce curata ResultBox-ul.
             }
@@ -89,34 +89,35 @@ namespace GettingStartedWithCSharp
             _equation = "";
             try
             {
-                _textDeAfisat = Convert.ToString(_calculatorEngine.SubmitOperation(_operation, Convert.ToDecimal(_textAfisat)));
+                Func<decimal, string> converter = Convert.ToString;
+                _textToBeShown = converter(_calculatorEngine.SubmitOperation(_operation, Convert.ToDecimal(_shownText)));
             }
             catch (Exception ex)
             {
                 if (ex is FormatException || ex is ArgumentException)
                 {
                     _messageBoxDisplayService.Show(ex.Message);
-                    _textDeAfisat = "operatie nevalida";
+                    _textToBeShown = "Invalid operation";
                 }
             }
-            if (Regex.Matches(_textDeAfisat, @"[a-zA-Z]").Count > 0)//
-            { _messageBoxDisplayService.Show("Operatia nu este valida"); }
+            if (Regex.Matches(_textToBeShown, @"[a-zA-Z]").Count > 0)//
+            { _messageBoxDisplayService.Show("Invalid operation"); }
             else
             {
                 try
                 {
-                    _textDeAfisat = GetFormattedNumberForDisplay(_textDeAfisat);
+                    _textToBeShown = GetFormattedNumberForDisplay(_textToBeShown);
                 }
                 catch (FormatException formatEx)
                 {
                     _messageBoxDisplayService.Show(formatEx.Message);
-                    _textDeAfisat = "operatie nevalida";
+                    _textToBeShown = "Invalid operation";
                 }
             }
             _isResultObtained = true;
-            _calculatorView.SetResultBoxText(_textDeAfisat);
-            _istoric += (_textDeAfisat + ", ");
-            _calculatorView.SetHistoryBoxText(_istoric);
+            _calculatorView.SetResultBoxText(_textToBeShown);
+            _history += (_textToBeShown + ", ");
+            _calculatorView.SetHistoryBoxText(_history);
             if (_isDigitPressed)
             {
                 _calculatorEngine.ClearValue();
@@ -126,58 +127,58 @@ namespace GettingStartedWithCSharp
         private void OnClearAllClick(object sender, EventArgs e)
         {
             _calculatorEngine.ClearValue();
-            _textAfisat = "";
-            _calculatorView.SetResultBoxText(_textAfisat);
-            _istoric = "";
-            _calculatorView.SetHistoryBoxText(_istoric);
+            _shownText = "";
+            _calculatorView.SetResultBoxText(_shownText);
+            _history = "";
+            _calculatorView.SetHistoryBoxText(_history);
             _equation = "";
             _calculatorView.EquationLabel(_equation);
         }
 
         private void OnEraseHistory(object sender, EventArgs e)
         {
-            string mesaj = "Doresti sa stergi istoricul?";
-            string titlu = "Stergere Istoric";
-            if (String.IsNullOrEmpty(_istoric))
+            string message = "Do you want to clear the history?";
+            string title = "History Clear";
+            if (String.IsNullOrEmpty(_history))
             {
-                _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce sterge.");
+                _messageBoxDisplayService.Show("The history is already empty!");
             }
             else
             {
-                bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj, titlu);
-                if (clearHistory == true)
+                bool clearHistory = _messageBoxDisplayService.PromptUser(message, title);
+                if (clearHistory)
                 {
-                    _istoric = "";
-                    _calculatorView.SetHistoryBoxText(_istoric);
+                    _history = "";
+                    _calculatorView.SetHistoryBoxText(_history);
                 }
             }
         }
 
         private void OnSaveHistoryClick(object sender, EventArgs e)
         {
-            string mesaj = "Doresti sa stergi istoricul?";
-            string titlu = "Stergere Istoric";
-            if (String.IsNullOrEmpty(_istoric) || !(Regex.Matches(_istoric, @"[a-zA-Z0-9]").Count > 0))
+            string message = "Do you want to empty the history?";
+            string title = "History Clear";
+            if (String.IsNullOrEmpty(_history) || !(Regex.Matches(_history, @"[a-zA-Z0-9]").Count > 0))
             {
-                _messageBoxDisplayService.Show("Istoricul este gol, nu avem ce salva.");
-                _istoric = "";
-                _calculatorView.SetHistoryBoxText(_istoric);
+                _messageBoxDisplayService.Show("The history is empty!");
+                _history = "";
+                _calculatorView.SetHistoryBoxText(_history);
             }
             else
             {
-                bool isHistorySaved = _saveHistoryService.SaveHistory(_istoric);
+                bool isHistorySaved = _saveHistoryService.SaveHistory(_history);
                 if (isHistorySaved == false)
                 {
-                    _messageBoxDisplayService.Show("Istoricul nu a fost salvat");
+                    _messageBoxDisplayService.Show("History was not saved!");
                 }
                 else
                 {
-                    _messageBoxDisplayService.Show("Istoricul a fost salvat.");
-                    bool clearHistory = _messageBoxDisplayService.PromptUser(mesaj, titlu);
-                    if (clearHistory == true)
+                    _messageBoxDisplayService.Show("History was saved!");
+                    bool clearHistory = _messageBoxDisplayService.PromptUser(message, title);
+                    if (clearHistory)
                     {
-                        _istoric = "";
-                        _calculatorView.SetHistoryBoxText(_istoric);
+                        _history = "";
+                        _calculatorView.SetHistoryBoxText(_history);
                     }
                 }
             }
@@ -187,40 +188,38 @@ namespace GettingStartedWithCSharp
         {
             Button b = (Button)sender;
             string memoryClick = b.Text;
-            if (String.IsNullOrEmpty(_textAfisat))
-            { _messageBoxDisplayService.Show("Nu poti opera folosind o valoare nevalida."); }
+            if (String.IsNullOrEmpty(_shownText))
+            { _messageBoxDisplayService.Show("You can not use an invalid value!"); }
             else
             {
                 switch (memoryClick)
                 {
                     case "MC":
-                        string mesaj = "Doresti sa golesti memoria?";
-                        string titlu = "Golire Memorie";
-                        bool clearMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
-                        if (clearMemoryStored == true)
+                        string message = "Do you want to empty the memory";
+                        string title = "Memory Clear";
+                        bool clearMemoryStored = _messageBoxDisplayService.PromptUser(message, title);
+                        if (clearMemoryStored)
                         {
                             _calculatorEngine.MemoryClear();
                         }
                         break;
                     case "MR":
-                        _textAfisat = FormatShownText(_calculatorEngine.MemoryRestore());
-                        _calculatorView.SetResultBoxText(_textAfisat);
+                        _shownText = FormatShownText(_calculatorEngine.MemoryRestore());
+                        _calculatorView.SetResultBoxText(_shownText);
                         break;
                     case "MS":
-                        _calculatorEngine.MemoryStore(decimal.Parse(_textAfisat));
+                        _calculatorEngine.MemoryStore(decimal.Parse(_shownText));
                         break;
                     case "M+":
-                        try { _calculatorEngine.MemoryAdd(Convert.ToDecimal(_textAfisat)); }
+                        try { _calculatorEngine.MemoryAdd(Convert.ToDecimal(_shownText)); }
                         catch (FormatException formatEx) { _messageBoxDisplayService.Show(formatEx.Message); }
                         break;
                     case "M-":
-                        try { _calculatorEngine.MemoryDiff(Convert.ToDecimal(_textAfisat)); }
+                        try { _calculatorEngine.MemoryDiff(Convert.ToDecimal(_shownText)); }
                         catch (FormatException formatEx) { _messageBoxDisplayService.Show(formatEx.Message); }
                         break;
                     case "M":
                         _calculatorView.MemoryButtonShow(FormatShownText(_calculatorEngine.MemoryShow()));
-                        break;
-                    default:
                         break;
                 }
 
@@ -235,16 +234,16 @@ namespace GettingStartedWithCSharp
             }
         }
 
-        private string GetFormattedNumberForDisplay(string textAfisat)
+        private string GetFormattedNumberForDisplay(string shownText)
         {
-            if (textAfisat.ToCharArray().Count(c => c == '.') > 1)
+            if (shownText.ToCharArray().Count(c => c == '.') > 1)
             {
-                throw new FormatException(String.Format("Aceasta nu este o valoare valida."));
+                throw new FormatException("Invalid Value.");
             }
             else
             {
-                textAfisat = FormatShownText(Convert.ToDecimal(textAfisat));
-                return textAfisat;
+                shownText = FormatShownText(Convert.ToDecimal(shownText));
+                return shownText;
             }
         }
 

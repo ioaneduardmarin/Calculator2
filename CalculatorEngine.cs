@@ -1,46 +1,47 @@
-﻿using GettingStartedWithCSharp.Properties;
-using System;
+﻿using System;
 
 namespace GettingStartedWithCSharp
 {
     public class CalculatorEngine : ICalculatorEngine
     {
-        public decimal Value { get; private set; } = 0m;
+        public decimal Value { get; private set; }
         private decimal _memory;
-        public bool HasMemoryStored { get; private set; } = false;
+        public bool HasMemoryStored { get; private set; }
 
-        public decimal SubmitOperation(string operation, decimal numarAfisat)
+        public decimal SubmitOperation(string operation, decimal shownNumber)
         {
 
             switch (operation)
             {
                 case "=":
-                    Value = numarAfisat;
+                    Value = shownNumber;
                     return Value;
                 case "+":
-                    Value = Value + numarAfisat;
+                    Value += shownNumber;
                     return Value;
                 case "-":
-                    Value = Value - numarAfisat;
+                    Value -= shownNumber;
 
                     return Value;
                 case "*":
-                    Value = Value * numarAfisat;
+                    Value *= shownNumber;
                     return Value;
                 case "/":
                     try
                     {
-                        Value = Value / numarAfisat;
+                        Value /= shownNumber;
                     }
                     catch (DivideByZeroException)
                     {
-                        throw new ArgumentException(String.Format("Numarul {0} nu poate fi impartit la 0.", Value), "Value");
+                        var message = String.Format($"Numarul {Value} nu poate fi impartit la 0.");
+                        throw new ArgumentException(message);
                     }
                     return Value;
                 case "sqrt":
                     if (Value < 0)
                     {
-                        throw new ArgumentException(String.Format("{0} este un numar negativ => Nu ii putem extrage radacina patratica!", Value), "Value");
+                        var message = String.Format($"{Value} este un numar negativ => Nu ii putem extrage radacina patratica!");
+                        throw new ArgumentException(message);
                     }
                     Value = (decimal)(Math.Sqrt((double)Value));
                     return Value;
@@ -59,9 +60,9 @@ namespace GettingStartedWithCSharp
             _memory -= newValue;
         }
 
-        public void MemoryStore(decimal numarAfisat)
+        public void MemoryStore(decimal shownNumber)
         {
-            _memory = numarAfisat;
+            _memory = shownNumber;
             HasMemoryStored = true;
         }
 
@@ -81,11 +82,6 @@ namespace GettingStartedWithCSharp
             return _memory;
         }
 
-        public decimal GetValue()
-        {
-            return Value;
-        }
-
         public decimal ClearValue()
         {
             Value = 0m;
@@ -96,10 +92,10 @@ namespace GettingStartedWithCSharp
 
 public interface ICalculatorEngine
 {
-    decimal SubmitOperation(string operation, decimal numarAfisat);
+    decimal SubmitOperation(string operation, decimal shownNumber);
     void MemoryClear();
     decimal MemoryRestore();
-    void MemoryStore(decimal textAfisat);
+    void MemoryStore(decimal shownNumber);
     void MemoryAdd(decimal newValue);
     void MemoryDiff(decimal newValue);
     decimal MemoryShow();

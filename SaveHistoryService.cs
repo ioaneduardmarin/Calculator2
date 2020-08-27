@@ -5,7 +5,7 @@ namespace GettingStartedWithCSharp
 {
     class SaveHistoryService : ISaveHistoryService
     {
-        public bool SaveHistory(string istoric)
+        public bool SaveHistory(string history)
         {
             bool isHistorySaved = false;
             SaveFileDialog sfd = new SaveFileDialog
@@ -18,7 +18,7 @@ namespace GettingStartedWithCSharp
                 string path = sfd.FileName;
                 using (var sw = new StreamWriter(File.Create(path)))
                 {
-                    sw.Write(istoric);
+                    sw.Write(history);
                     sw.Dispose();
                     isHistorySaved = true;
                 }
@@ -33,6 +33,6 @@ namespace GettingStartedWithCSharp
 
     public interface ISaveHistoryService
     {
-        bool SaveHistory(string istoric);
+        bool SaveHistory(string history);
     }
 }

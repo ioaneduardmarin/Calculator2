@@ -15,7 +15,7 @@ namespace GettingStartedWithCSharp
             var messageService = new MessageBoxDisplayService();
             var saveHist = new SaveHistoryService();
             var businessLogicObject = new CalculatorEngine();
-            var CalcPresenter = new CalculatorPresenter(calcView, messageService, saveHist, businessLogicObject);
+            var calcPresenter = new CalculatorPresenter(calcView, messageService, saveHist, businessLogicObject);
             Application.Run(calcView);
         }
 

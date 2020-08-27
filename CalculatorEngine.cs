@@ -1,57 +1,51 @@
-﻿using System;
-using System.Linq;
+﻿using GettingStartedWithCSharp.Properties;
+using System;
 
 namespace GettingStartedWithCSharp
 {
     public class CalculatorEngine : ICalculatorEngine
     {
-        private decimal _value = 0m;
+        public decimal Value { get; private set; } = 0m;
         private decimal _memory;
         public bool HasMemoryStored { get; private set; } = false;
-        private readonly IMessageBoxDisplayService _messageBoxDisplayService;
-        private readonly IUtils _utils;
 
-        public CalculatorEngine(IMessageBoxDisplayService messageBoxDisplayService, IUtils utils)
+        public decimal SubmitOperation(string operation, decimal numarAfisat)
         {
-            _messageBoxDisplayService = messageBoxDisplayService;
-            _utils = utils;
-        }
 
-        public decimal GetNumberToBeShown(string operation, decimal numarAfisat)
-        {
             switch (operation)
             {
+                case "=":
+                    Value = numarAfisat;
+                    return Value;
                 case "+":
-                    _value = _value + numarAfisat;
-                    return _value;
+                    Value = Value + numarAfisat;
+                    return Value;
                 case "-":
-                    _value =_value - numarAfisat;
+                    Value = Value - numarAfisat;
 
-                    return _value;
+                    return Value;
                 case "*":
-                    _value = _value * numarAfisat;
-                    return _value;
+                    Value = Value * numarAfisat;
+                    return Value;
                 case "/":
                     try
                     {
-                        _value = _value / numarAfisat;
+                        Value = Value / numarAfisat;
                     }
                     catch (DivideByZeroException)
                     {
-                        throw new ArgumentException(String.Format("Numarul {0} nu poate fi impartit la 0.", _value), "Value");
+                        throw new ArgumentException(String.Format("Numarul {0} nu poate fi impartit la 0.", Value), "Value");
                     }
-                    return _value;
+                    return Value;
                 case "sqrt":
-                    if (_value < 0)
+                    if (Value < 0)
                     {
-                        throw new ArgumentException(String.Format("{0} este un numar negativ => Nu ii putem extrage radacina patratica!", _value), "Value");
+                        throw new ArgumentException(String.Format("{0} este un numar negativ => Nu ii putem extrage radacina patratica!", Value), "Value");
                     }
-
-                    _value = (decimal)(Math.Sqrt((double)_value));
-                    
-                    return _value;
+                    Value = (decimal)(Math.Sqrt((double)Value));
+                    return Value;
                 default:
-                    return _value;
+                    return Value;
             }
         }
 
@@ -65,67 +59,54 @@ namespace GettingStartedWithCSharp
             _memory -= newValue;
         }
 
-        public void MemoryStore(string textAfisat)
+        public void MemoryStore(decimal numarAfisat)
         {
-            _memory = decimal.Parse(textAfisat);
+            _memory = numarAfisat;
             HasMemoryStored = true;
         }
 
-        public string MemoryRestore()
+        public decimal MemoryRestore()
         {
-            string text = _utils.FormatShownText(_memory);
-            return text;
+            return _memory;
         }
 
         public void MemoryClear()
         {
-            string mesaj = "Doresti sa golesti memoria?";
-            string titlu = "Golire Memorie";
-            bool clearMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
-            if (clearMemoryStored == true)
-            {
-                _memory = 0;
-                HasMemoryStored = false;
-            }
+            _memory = 0m;
+            HasMemoryStored = false;
         }
 
-        public string MemoryShow()
+        public decimal MemoryShow()
         {
-            string text = _utils.FormatShownText(_memory);
-            return text;
-        }
-
-        public void SetValue(string textAfisat)
-        {
-            _value = decimal.Parse(textAfisat);
+            return _memory;
         }
 
         public decimal GetValue()
         {
-            return _value;
+            return Value;
         }
 
         public decimal ClearValue()
         {
-            _value = 0;
-            return _value;
+            Value = 0m;
+            return Value;
         }
     }
 }
 
 public interface ICalculatorEngine
 {
-    decimal GetNumberToBeShown(string operation, decimal textAfisat);
+    decimal SubmitOperation(string operation, decimal numarAfisat);
+    void MemoryClear();
+    decimal MemoryRestore();
+    void MemoryStore(decimal textAfisat);
     void MemoryAdd(decimal newValue);
     void MemoryDiff(decimal newValue);
-    void MemoryStore(string textAfisat);
-    string MemoryRestore();
-    void MemoryClear();
-    string MemoryShow();
-    void SetValue(string textAfisat);
+    decimal MemoryShow();
     decimal ClearValue();
 
     bool HasMemoryStored { get; }
+    decimal Value { get; }
 }
 
 

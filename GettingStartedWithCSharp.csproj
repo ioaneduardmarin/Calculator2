@@ -55,7 +55,6 @@
       <DependentUpon>CalculatorForm.cs</DependentUpon>
     </Compile>
     <Compile Include="CalculatorEngine.cs" />
-    <Compile Include="Utils.cs" />
     <Compile Include="SaveHistoryService.cs" />
     <Compile Include="MessageBoxDisplayService.cs" />
     <Compile Include="Program.cs" />

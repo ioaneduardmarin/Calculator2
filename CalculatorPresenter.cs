@@ -11,21 +11,29 @@ namespace GettingStartedWithCSharp
         private readonly IMessageBoxDisplayService _messageBoxDisplayService;
         private readonly ISaveHistoryService _saveHistoryService;
         private readonly ICalculatorEngine _calculatorEngine;
-        private readonly IUtils _utils;
-        private string _textAfisat = ""; //Acest camp preia valorile introduse odata cu apasarea butoanelor caracteristce cifrelor
-        private string _operation = ""; //Acest camp preia valorile introduse odata cu apasarea butoanelor caracteristce operatorilor
-        private string _equation = ""; //Acest camp arata operatia aflata in desfasurare in prezent: este alcatuit din campurile _textAfisat si _operatie
-        private string _istoric = ""; //Acest camp arata istoricul operatiilor realizare. El este realizat prin concatenarea la acesta a campului _textAfisat odata cu apasarea butonului "Rezulta" 
-        private bool _isoperationPressed = false; //Acest camp verifica daca a fost apasat vreun buton caracteristic operatorilor
-        private bool _isresultObtained = false; //Acest buton verifica daca a fost apasat butonul "Rezuta"
+        //Preia valorile introduse odata cu apasarea butoanelor caracteristce cifrelor
+        private string _textAfisat = "";
+        //Preia valorile introduse odata cu apasarea butoanelor caracteristce operatorilor
+        private string _operation = "";
+        //Arata operatia aflata in desfasurare in prezent: este alcatuit din campurile _textAfisat si _operatie
+        private string _equation = "";
+        //Arata istoricul operatiilor realizate. El este realizat prin concatenarea la acesta a campului _textAfisat odata cu apasarea butonului "Rezulta" 
+        private string _istoric = "";
+        //Verifica daca a fost apasat vreun buton caracteristic operatorilor
+        private bool _isOperatorPressed = false;
+        //Verifica daca a fost apasat butonul "Rezulta"
+        private bool _isResultObtained = false;
+        //Verifica daca a fost apasat un buton caracteristic cifrelor
+        private bool _isDigitPressed = false;
+        //Preia valoarea primita de la calculator pentru a o afisa in cadrul View-ului
+        private string _textDeAfisat;
 
-        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, ICalculatorEngine businessLogicObject, IUtils utils)
+        public CalculatorPresenter(ICalculatorView calculatorView, IMessageBoxDisplayService messageBoxDisplayService, ISaveHistoryService saveHistoryService, ICalculatorEngine businessLogicObject)
         {
             _calculatorView = calculatorView;
             _messageBoxDisplayService = messageBoxDisplayService;
             _saveHistoryService = saveHistoryService;
             _calculatorEngine = businessLogicObject;
-            _utils = utils;
             calculatorView.DigitClicked += OnDigitClick;
             calculatorView.OperatorClicked += OnOperatorClick;
             calculatorView.ResultClicked += OnResultClick;
@@ -38,11 +46,11 @@ namespace GettingStartedWithCSharp
 
         private void OnDigitClick(object sender, EventArgs e)
         {
-            if (_textAfisat == "0" || _isoperationPressed || _isresultObtained)
+            if (_textAfisat == "0" || _isOperatorPressed || _isResultObtained)
             { _textAfisat = ""; }
-
-            _isresultObtained = false;
-            _isoperationPressed = false;
+            _isDigitPressed = true;
+            _isResultObtained = false;
+            _isOperatorPressed = false;
             Button b = (Button)sender;
             _textAfisat += b.Text;
             _calculatorView.SetResultBoxText(_textAfisat);
@@ -60,8 +68,8 @@ namespace GettingStartedWithCSharp
             _operation = b.Text;
             try
             {
-                _textAfisat =Convert.ToString(_calculatorEngine.GetNumberToBeShown(_operation,Convert.ToDecimal(_textAfisat)));
-                _isoperationPressed = true;
+                _calculatorEngine.SubmitOperation("=", Convert.ToDecimal(_textAfisat));
+                _isOperatorPressed = true;
                 _equation = _textAfisat + " " + _operation;
                 _calculatorView.EquationLabel(_equation);
             }
@@ -76,36 +84,42 @@ namespace GettingStartedWithCSharp
 
         private void OnResultClick(object sender, EventArgs e)
         {
-            _isoperationPressed = false;
+            _isDigitPressed = false;
+            _isOperatorPressed = false;
             _equation = "";
             try
             {
-                _textAfisat = Convert.ToString(_calculatorEngine.GetNumberToBeShown(_operation, Convert.ToDecimal(_textAfisat)));
+                _textDeAfisat = Convert.ToString(_calculatorEngine.SubmitOperation(_operation, Convert.ToDecimal(_textAfisat)));
             }
             catch (ArgumentException argEx)
             {
                 _messageBoxDisplayService.Show(argEx.Message);
-                _textAfisat = "operatie nevalida";
+                _textDeAfisat = "operatie nevalida";
             }
 
-            if (Regex.Matches(_textAfisat, @"[a-zA-Z]").Count > 0)//
+            if (Regex.Matches(_textDeAfisat, @"[a-zA-Z]").Count > 0)//
             { _messageBoxDisplayService.Show("Operatia nu este valida"); }
             else
             {
                 try
                 {
-                    _textAfisat = GetFormattedNumberForDisplay(_textAfisat);
+                    _textDeAfisat = GetFormattedNumberForDisplay(_textDeAfisat);
                 }
                 catch (FormatException formatEx)
                 {
                     _messageBoxDisplayService.Show(formatEx.Message);
-                    _textAfisat = "operatie nevalida";
+                    _textDeAfisat = "operatie nevalida";
                 }
             }
-            _isresultObtained = true;
-            _calculatorView.SetResultBoxText(_textAfisat);
-            _istoric += (_textAfisat + ", ");
+            _isResultObtained = true;
+            _calculatorView.SetResultBoxText(_textDeAfisat);
+            _istoric += (_textDeAfisat + ", ");
             _calculatorView.SetHistoryBoxText(_istoric);
+            if (_isDigitPressed)
+            {
+                _calculatorEngine.ClearValue();
+            }
+
         }
 
         private void OnClearAllClick(object sender, EventArgs e)
@@ -166,46 +180,57 @@ namespace GettingStartedWithCSharp
                     }
                 }
             }
-
         }
 
         private void OnMemoryClick(object sender, EventArgs e)
         {
             Button b = (Button)sender;
             string memoryClick = b.Text;
-
-            switch (memoryClick)
-            {
-                case "MC":
-                    _calculatorEngine.MemoryClear();
-                    break;
-                case "MR":
-                    _textAfisat = _calculatorEngine.MemoryRestore();
-                    _calculatorView.SetResultBoxText(_textAfisat);
-                    break;
-                case "MS":
-                    _calculatorEngine.MemoryStore(_textAfisat);
-                    break;
-                case "M+":
-                    _calculatorEngine.MemoryAdd(Convert.ToDecimal(_textAfisat));
-                    break;
-                case "M-":
-                    _calculatorEngine.MemoryDiff(Convert.ToDecimal(_textAfisat));
-                    break;
-                case "M":
-                    _calculatorView.MemoryButtonShow(_calculatorEngine.MemoryShow());
-                    break;
-                default:
-                    break;
-            }
-
-            if (!_calculatorEngine.HasMemoryStored)
-            {
-                _calculatorView.DisableMemoryButtons();
-            }
+            if (String.IsNullOrEmpty(_textAfisat))
+            { _messageBoxDisplayService.Show("Nu poti opera folosind o valoare nevalida."); }
             else
             {
-                _calculatorView.EnableMemoryButtons();
+                switch (memoryClick)
+                {
+                    case "MC":
+                        string mesaj = "Doresti sa golesti memoria?";
+                        string titlu = "Golire Memorie";
+                        bool clearMemoryStored = _messageBoxDisplayService.PromptUser(mesaj, titlu);
+                        if (clearMemoryStored == true)
+                        {
+                            _calculatorEngine.MemoryClear();
+                        }
+                        break;
+                    case "MR":
+                        _textAfisat = FormatShownText(_calculatorEngine.MemoryRestore());
+                        _calculatorView.SetResultBoxText(_textAfisat);
+                        break;
+                    case "MS":
+                        _calculatorEngine.MemoryStore(decimal.Parse(_textAfisat));
+                        break;
+                    case "M+":
+                        try { _calculatorEngine.MemoryAdd(Convert.ToDecimal(_textAfisat)); }
+                        catch (FormatException formatEx) { _messageBoxDisplayService.Show(formatEx.Message); }
+                        break;
+                    case "M-":
+                        try { _calculatorEngine.MemoryDiff(Convert.ToDecimal(_textAfisat)); }
+                        catch (FormatException formatEx) { _messageBoxDisplayService.Show(formatEx.Message); }
+                        break;
+                    case "M":
+                        _calculatorView.MemoryButtonShow(FormatShownText(_calculatorEngine.MemoryShow()));
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!_calculatorEngine.HasMemoryStored)
+                {
+                    _calculatorView.DisableMemoryButtons();
+                }
+                else
+                {
+                    _calculatorView.EnableMemoryButtons();
+                }
             }
         }
 
@@ -217,9 +242,14 @@ namespace GettingStartedWithCSharp
             }
             else
             {
-                textAfisat = _utils.FormatShownText(Convert.ToDecimal(textAfisat));
+                textAfisat = FormatShownText(Convert.ToDecimal(textAfisat));
                 return textAfisat;
             }
+        }
+
+        private string FormatShownText(decimal number)
+        {
+            return number.ToString("0.000");
         }
     }
 }

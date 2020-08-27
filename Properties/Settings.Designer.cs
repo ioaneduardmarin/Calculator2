@@ -26,5 +26,7 @@ namespace GettingStartedWithCSharp.Properties
                 return defaultInstance;
             }
         }
+
+        public bool FirstRun { get; internal set; }
     }
 }

@@ -91,12 +91,14 @@ namespace GettingStartedWithCSharp
             {
                 _textDeAfisat = Convert.ToString(_calculatorEngine.SubmitOperation(_operation, Convert.ToDecimal(_textAfisat)));
             }
-            catch (ArgumentException argEx)
+            catch (Exception ex)
             {
-                _messageBoxDisplayService.Show(argEx.Message);
-                _textDeAfisat = "operatie nevalida";
+                if (ex is FormatException || ex is ArgumentException)
+                {
+                    _messageBoxDisplayService.Show(ex.Message);
+                    _textDeAfisat = "operatie nevalida";
+                }
             }
-
             if (Regex.Matches(_textDeAfisat, @"[a-zA-Z]").Count > 0)//
             { _messageBoxDisplayService.Show("Operatia nu este valida"); }
             else

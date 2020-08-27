@@ -121,7 +121,6 @@ namespace GettingStartedWithCSharp
             {
                 _calculatorEngine.ClearValue();
             }
-
         }
 
         private void OnClearAllClick(object sender, EventArgs e)

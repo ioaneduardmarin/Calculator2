@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
-using static GettingStartedWithCSharp.CalculatorForm;
 
 namespace GettingStartedWithCSharp
 {
     public partial class CalculatorForm : Form, ICalculatorView
     {
-
         public CalculatorForm()
         {
             InitializeComponent();
-
         }
 
         public event EventHandler DigitClicked
@@ -147,8 +144,6 @@ namespace GettingStartedWithCSharp
             }
         }
 
-        public string TxtMemoryShow { get; set; }
-
         public void SetResultBoxText(string rezultat)
         {
             ResultBox.Text = rezultat;
@@ -172,7 +167,7 @@ namespace GettingStartedWithCSharp
             MInfo.Enabled = true;
             MRestore.Enabled = true;
         }
-       
+
         public void DisableMemoryButtons()
         {
             MClear.Enabled = false;
@@ -197,6 +192,5 @@ namespace GettingStartedWithCSharp
         void SetResultBoxText(string rezultat);
         void EnableMemoryButtons();
         void DisableMemoryButtons();
-        string TxtMemoryShow { get; set; }
     }
 }

@@ -3,13 +3,16 @@ using System.Windows.Forms;
 
 namespace GettingStartedWithCSharp
 {
-    public class SaveHistoryService : ISaveHistoryService
+    class SaveHistoryService : ISaveHistoryService
     {
         public bool SaveHistory(string istoric)
         {
             bool isHistorySaved = false;
-            SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "Text File|*";
+            SaveFileDialog sfd = new SaveFileDialog
+            {
+                Filter = "Text File|*"
+            };
+
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 string path = sfd.FileName;
